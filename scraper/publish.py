@@ -35,12 +35,11 @@ CONFIG_PATH = ROOT / "config.json"
 
 
 def run(cmd: list, check=True):
-    """运行一条命令，返回 (是否成功, 输出)。"""
+    """运行一条命令，返回 (是否成功, 输出)。是否成功严格依据返回码，
+    便于上层用它判断 remote 是否存在等情况（check 参数保留兼容，不影响返回的成功标志）。"""
     r = subprocess.run(cmd, cwd=str(ROOT), capture_output=True, text=True)
     out = (r.stdout or "") + (r.stderr or "")
-    if check and r.returncode != 0:
-        return False, out
-    return True, out
+    return (r.returncode == 0), out
 
 
 def sync_docs():
