@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>小红书技术收藏 · 知识点总结</title>
+<style>
+  :root {
+    --bg: #f7f7f8;
+    --card: #ffffff;
+    --ink: #1f2329;
+    --sub: #646a73;
+    --line: #e8e9ec;
+    --red: #ff2442;
+    --red-soft: #fff0f2;
+    --high: #18a058;
+    --medium: #f0a020;
+    --low: #b0b3b8;
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.04);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+  }
+  header {
+    background: linear-gradient(135deg, #ff2442, #ff6b81);
+    color: #fff; padding: 28px 24px 22px;
+  }
+  header h1 { margin: 0 0 6px; font-size: 22px; font-weight: 700; }
+  header p { margin: 0; opacity: .92; font-size: 13px; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+  .toolbar {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--bg); padding: 16px 0 10px; border-bottom: 1px solid var(--line);
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  }
+  .search {
+    flex: 1; min-width: 220px; padding: 10px 14px; border: 1px solid var(--line);
+    border-radius: 10px; font-size: 14px; background: #fff; outline: none;
+  }
+  .search:focus { border-color: var(--red); }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line);
+    background: #fff; cursor: pointer; font-size: 13px; color: var(--sub);
+    user-select: none; transition: .15s;
+  }
+  .chip:hover { border-color: var(--red); color: var(--red); }
+  .chip.active { background: var(--red); color: #fff; border-color: var(--red); }
+  .stats { font-size: 12px; color: var(--sub); padding: 10px 0 4px; }
+  .topic { margin: 18px 0 8px; }
+  .topic-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 17px; font-weight: 700; margin: 22px 0 12px;
+  }
+  .topic-title .count {
+    font-size: 12px; font-weight: 500; color: var(--sub);
+    background: #fff; border: 1px solid var(--line); padding: 2px 8px; border-radius: 999px;
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px 18px; margin-bottom: 12px; box-shadow: var(--shadow);
+  }
+  .point-head { display: flex; align-items: flex-start; gap: 10px; }
+  .badge {
+    flex-shrink: 0; font-size: 11px; padding: 2px 8px; border-radius: 6px; color: #fff; margin-top: 3px;
+  }
+  .badge.high { background: var(--high); }
+  .badge.medium { background: var(--medium); }
+  .badge.low { background: var(--low); }
+  .point-title { font-size: 15px; font-weight: 600; }
+  .detail { color: var(--sub); font-size: 14px; margin: 8px 0 12px; }
+  .sources { display: flex; flex-wrap: wrap; gap: 8px; }
+  .src {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; color: var(--red); text-decoration: none;
+    background: var(--red-soft); padding: 5px 10px; border-radius: 8px;
+    border: 1px solid #ffe0e4; transition: .15s; max-width: 100%;
+  }
+  .src:hover { background: var(--red); color: #fff; }
+  .src .ic { font-size: 11px; }
+  .src .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px; }
+  .empty { text-align: center; color: var(--sub); padding: 60px 0; }
+  footer { text-align: center; color: var(--sub); font-size: 12px; padding: 30px 0 50px; }
+  .err { background: #fff3f3; border: 1px solid #ffd6d6; color: #b00; padding: 14px; border-radius: 10px; margin: 20px 0; font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>小红书技术收藏 · 知识点总结</h1>
+    <p>AI / LLM / Agent · 每个知识点可点击跳转原帖溯源</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="toolbar">
+    <input id="search" class="search" placeholder="搜索知识点关键词，如 RAG、微调、Prompt..." />
+    <div class="chips" id="qualityChips">
+      <span class="chip active" data-q="all">全部质量</span>
+      <span class="chip" data-q="high">高价值</span>
+      <span class="chip" data-q="medium">一般</span>
+      <span class="chip" data-q="low">可跳过</span>
+    </div>
+  </div>
+  <div class="chips" id="topicChips" style="margin-top:10px;"></div>
+  <div class="stats" id="stats"></div>
+  <div id="content"></div>
+</div>
+
+<footer>数据来源：你的小红书收藏夹 · 由大模型自动总结生成</footer>
+
+<script>
+const state = { data: null, topic: 'all', quality: 'all', kw: '' };
+
+async function load() {
+  try {
+    const res = await fetch('summary.json?_=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    state.data = await res.json();
+    initTopics();
+    render();
+  } catch (e) {
+    document.getElementById('content').innerHTML =
+      '<div class="err">无法加载 summary.json：' + e.message +
+      '。<br>请确认本页面与 summary.json 在同一目录，并通过本地服务器打开（见 README）。</div>';
+  }
+}
+
+function initTopics() {
+  const box = document.getElementById('topicChips');
+  const all = document.createElement('span');
+  all.className = 'chip active'; all.dataset.topic = 'all'; all.textContent = '全部主题';
+  box.appendChild(all);
+  (state.data.topics || []).forEach(t => {
+    const c = document.createElement('span');
+    c.className = 'chip'; c.dataset.topic = t.topic; c.textContent = t.topic;
+    box.appendChild(c);
+  });
+  box.addEventListener('click', e => {
+    if (!e.target.dataset.topic) return;
+    state.topic = e.target.dataset.topic;
+    [...box.children].forEach(c => c.classList.toggle('active', c === e.target));
+    render();
+  });
+  const qb = document.getElementById('qualityChips');
+  qb.addEventListener('click', e => {
+    if (!e.target.dataset.q) return;
+    state.quality = e.target.dataset.q;
+    [...qb.children].forEach(c => c.classList.toggle('active', c === e.target));
+    render();
+  });
+  document.getElementById('search').addEventListener('input', e => {
+    state.kw = e.target.value.trim().toLowerCase();
+    render();
+  });
+}
+
+function matchKw(p) {
+  if (!state.kw) return true;
+  const hay = (p.point + ' ' + (p.detail||'') + ' ' +
+    (p.sources||[]).map(s=>s.title).join(' ')).toLowerCase();
+  return hay.includes(state.kw);
+}
+
+function render() {
+  const root = document.getElementById('content');
+  root.innerHTML = '';
+  let total = 0, shown = 0;
+  const qualityLabel = { high:'高价值', medium:'一般', low:'可跳过' };
+
+  (state.data.topics || []).forEach(t => {
+    if (state.topic !== 'all' && t.topic !== state.topic) return;
+    const pts = (t.points || []).filter(p => {
+      total++;
+      if (state.quality !== 'all' && p.quality !== state.quality) return false;
+      if (!matchKw(p)) return false;
+      return true;
+    });
+    if (!pts.length) return;
+    shown += pts.length;
+
+    const sec = document.createElement('div');
+    sec.className = 'topic';
+    sec.innerHTML = `<div class="topic-title">${t.topic}
+      <span class="count">${pts.length} 条</span></div>`;
+    pts.forEach(p => {
+      const srcs = (p.sources||[]).map(s =>
+        `<a class="src" href="${s.url}" target="_blank" rel="noopener">
+           <span class="ic">🔗</span><span class="t">${s.title || s.note_id}</span></a>`).join('');
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="point-head">
+          <span class="badge ${p.quality}">${qualityLabel[p.quality]||p.quality}</span>
+          <span class="point-title">${p.point}</span>
+        </div>
+        ${p.detail ? `<div class="detail">${p.detail}</div>` : ''}
+        <div class="sources">${srcs}</div>`;
+      sec.appendChild(card);
+    });
+    root.appendChild(sec);
+  });
+
+  document.getElementById('stats').textContent =
+    `共 ${total} 条知识点，当前显示 ${shown} 条`;
+  if (!shown) root.innerHTML = '<div class="empty">没有匹配的知识点，试试调整筛选条件。</div>';
+}
+
+load();
+</script>
+</body>
+</html>

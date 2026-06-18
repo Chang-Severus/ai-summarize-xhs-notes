@@ -1,0 +1,29 @@
+# ============================================================
+# 小红书收藏夹 AI 总结 —— Python 依赖
+# 环境：Python 3.11（推荐用 conda 建 xhs-summary 环境）
+# 安装：pip install -r requirements.txt
+#       python -m playwright install chromium   # 还需装浏览器内核
+# ============================================================
+
+# --- 抓取：浏览器自动化（复用真实登录态，最稳） ---
+playwright==1.44.0
+greenlet==3.0.3
+pyee==11.1.0
+
+# --- 图片理解方案一：本地免费 OCR（默认） ---
+rapidocr_onnxruntime==1.3.24
+onnxruntime==1.27.0
+opencv-python==4.11.0.86
+numpy==1.26.4
+shapely==2.1.2
+pyclipper==1.4.0
+PyYAML==6.0.3
+six==1.17.0
+
+# --- 图片理解方案二：多模态大模型（可选，调用公司/厂商 API） ---
+# 公司 venus 代理与多数厂商都兼容 OpenAI 接口，用官方库最省心
+openai>=1.40,<2.0
+
+# --- 基础 ---
+Pillow==10.3.0
+requests==2.32.3

@@ -1,0 +1,20 @@
+# 含真实 API Key / 收藏夹地址，不要提交
+config.json
+
+# 登录态（含你的小红书 cookie）
+.auth/
+
+# 抓取下来的原始数据与图片
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 系统
+.DS_Store
+
+# 说明：docs/ 是 GitHub Pages 发布目录（仅含网页和总结结果），不在忽略列表，会被推送。
+# 而 config.json / .auth / data 含 Key、登录态、原始数据，已忽略，不会上线。
