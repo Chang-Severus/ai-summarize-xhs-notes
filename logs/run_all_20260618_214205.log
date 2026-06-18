@@ -1,0 +1,698 @@
+[2026-06-18 21:42:06] ########## 任务开始 ##########
+[2026-06-18 21:42:06] 日志文件：logs/run_all_20260618_214205.log
+[2026-06-18 21:42:06] ==================== 开始收藏夹 [ai] ====================
+[2026-06-18 21:42:06] [ai] 步骤1/4 抓取帖子 ...
+当前收藏夹：[ai] AI / LLM / Agent 技术
+已是登录状态，继续。
+打开收藏夹页面：https://www.xiaohongshu.com/board/69a5425d000000002502c11d?&apptime=1781777149&share_id=7840816d2e4f468c99562cc520311bee&xhsshare=CopyLink
+滚动收集所有帖子 ID（收藏夹是虚拟滚动，需边滚边记）...
+  滚动第 1 轮，累计收集 30 个帖子 ID
+  滚动第 2 轮，累计收集 72 个帖子 ID
+  滚动第 3 轮，累计收集 72 个帖子 ID
+  滚动第 4 轮，累计收集 108 个帖子 ID
+  滚动第 5 轮，累计收集 146 个帖子 ID
+  滚动第 6 轮，累计收集 146 个帖子 ID
+  滚动第 7 轮，累计收集 181 个帖子 ID
+  滚动第 8 轮，累计收集 184 个帖子 ID
+
+共收集到 184 个帖子 ID，开始逐条点击抓取...
+
+[1/184] 6a32bffe000000001101aa0c 已抓取过，跳过
+[2/184] 6a2e6a4d0000000035025524 已抓取过，跳过
+[3/184] 6a321829000000000f00597f 已抓取过，跳过
+[4/184] 6a30285d0000000008000ea5 已抓取过，跳过
+[5/184] 6a2f60ba0000000017008461 已抓取过，跳过
+[6/184] 6a2f652b000000000f0170a3 已抓取过，跳过
+[7/184] 6a26e02b000000002202b584 已抓取过，跳过
+[8/184] 6a2ede96000000001602730f 已抓取过，跳过
+[9/184] 6a2ecca500000000220201f6 已抓取过，跳过
+[10/184] 6a2e6a78000000002101b784 已抓取过，跳过
+[11/184] 6a1915af000000003502bbdf 已抓取过，跳过
+[12/184] 6a282663000000000702fa77 已抓取过，跳过
+[13/184] 6a19248d00000000070202c3 已抓取过，跳过
+[14/184] 6a243b530000000021016585 已抓取过，跳过
+[15/184] 6a240254000000002103e42f 已抓取过，跳过
+[16/184] 6a1d9ee40000000006031606 已抓取过，跳过
+[17/184] 6a2190580000000038036bd3 已抓取过，跳过
+[18/184] 6a1c29d20000000036003328 已抓取过，跳过
+[19/184] 6a1bb14d0000000036003c6a 已抓取过，跳过
+[20/184] 6a01ff1f0000000007022a71 已抓取过，跳过
+[21/184] 69f079e20000000038020a4e 已抓取过，跳过
+[22/184] 69fb0eca00000000350321cd 已抓取过，跳过
+[23/184] 69f85673000000001a02e89f 已抓取过，跳过
+[24/184] 69f45ce5000000003700de00 已抓取过，跳过
+[25/184] 69f24717000000001f000337 已抓取过，跳过
+[26/184] 69f22c620000000022025283 已抓取过，跳过
+[27/184] 69cfac6f00000000230103c2 已抓取过，跳过
+[28/184] 69f1e54f000000003703624a 已抓取过，跳过
+[29/184] 69f09406000000003502e1f7 已抓取过，跳过
+[30/184] 69dde2190000000023025763 已抓取过，跳过
+[31/184] 69f0be8c00000000360009fc 已抓取过，跳过
+[32/184] 69ef79f400000000350208fc 已抓取过，跳过
+[33/184] 69ef3544000000003501efab 已抓取过，跳过
+[34/184] 69e8c045000000002302759d 已抓取过，跳过
+[35/184] 69eb6d190000000037035497 已抓取过，跳过
+[36/184] 69e8c2610000000023024213 已抓取过，跳过
+[37/184] 69edf5090000000035030f02 已抓取过，跳过
+[38/184] 点击抓取 69edeee800000000350249c7 ...
+    OK：面试被问DeepSeek答不上来? 从V1开始补课 | 图片 6 张
+[39/184] 点击抓取 69eb15580000000011023001 ...
+    OK：如题 | 图片 1 张
+[40/184] 点击抓取 69eafed3000000002202475f ...
+    OK：如何评价 腾讯混元×元宝在ACL录用的论文！ | 图片 1 张
+[41/184] 点击抓取 69e9a5e3000000002200cb38 ...
+    OK：小红书一面：训练时教模型思考，推理只回答 | 图片 6 张
+[42/184] 点击抓取 69e8309d000000001b000815 ...
+    OK：Agentic RL 的加速方法 | 图片 1 张
+[43/184] 点击抓取 69d5bf190000000023015aed ...
+    OK：Agent RL训练核心要点 | 图片 3 张
+[44/184] 点击抓取 69e68d8a000000001a0284be ...
+    OK：注意力机制如何变得如此高效（第二部分） | 图片 0 张
+[45/184] 点击抓取 69e04b730000000020038989 ...
+    OK：多轮对话RL训练中Think内容的处理与训练 | 图片 6 张
+[46/184] 点击抓取 69e25acc000000002200260c ...
+    OK：训练的一个小问题 | 图片 1 张
+[47/184] 点击抓取 69e1dedb000000001f004d7d ...
+    OK：Agentic RL 实践经验的总结和反思 | 图片 9 张
+[48/184] 点击抓取 69df2081000000001f002dca ...
+    OK：大语言模型算法（perhaps工程）todo清单 | 图片 1 张
+[49/184] 点击抓取 69de65a5000000002301df27 ...
+    OK：手撕大厂题-vibe coding降龙七步 | 图片 0 张
+[50/184] 点击抓取 69d4804f00000000230273af ...
+    OK：改模型、调参的血泪经验总结✨深度学习人必 | 图片 3 张
+[51/184] 点击抓取 69cfdaa1000000002200fd3a ...
+    OK：微调实战-09（完） | 图片 0 张
+[52/184] 点击抓取 69b37da1000000000600cdcb ...
+    OK：Multi-Agent什么时候该用什么时候不该用 | 图片 0 张
+[53/184] 点击抓取 69d8bd1c000000002103a1af ...
+    OK：模型调参核心经验总结 | 图片 4 张
+[54/184] 点击抓取 69d62cdd00000000230074d5 ...
+    OK：大模型看！尝试！ | 图片 0 张
+[55/184] 点击抓取 69dbddeb000000001d01ca7a ...
+    OK：已知pairwise最优混合训练比例怎么定？ | 图片 5 张
+[56/184] 点击抓取 69d9298c00000000220275bf ...
+    OK：论为什么有点GPU的课题组都应该配一个infra | 图片 3 张
+[57/184] 点击抓取 69d9f031000000001d01937c ...
+    OK：Nginx入门教程，30分钟 | 图片 0 张
+[58/184] 点击抓取 69d75c1b000000002100708d ...
+    OK：面试官：大模型推理阶段的核心本质是什么？ | 图片 0 张
+[59/184] 点击抓取 69d8ca2600000000230061e1 ...
+    OK：算法小小怪笔记15:cc架构学习 | 图片 4 张
+[60/184] 点击抓取 69d8956f000000001b0018c2 ...
+    OK：Agentic RL实践经验总结 | 图片 4 张
+[61/184] 点击抓取 69c0ea5d000000001f00522c ...
+    OK：面试官问SFT数据格式，90%的人只答对第一层 | 图片 0 张
+[62/184] 点击抓取 69d5d092000000002301009a ...
+    OK：如何看到矩阵?[导系列2.5番外] | 图片 0 张
+[63/184] 点击抓取 69cc4125000000002300418d ...
+    OK：用推理链重新定义奖励模型——RM-R1 分享 | 图片 4 张
+[64/184] 点击抓取 69d4c5bd00000000230164b2 ...
+    OK：大模型Function Calling 深度解析 | 图片 0 张
+[65/184] 点击抓取 69d4868d000000001a029c50 ...
+    OK：Agentic能力从哪里来？ | 图片 9 张
+[66/184] 点击抓取 69d41ff8000000001d01a851 ...
+    OK：VLM RL算法思考（三） | 图片 9 张
+[67/184] 点击抓取 69d225d60000000020038c02 ...
+    OK：面试官：如何从0-1设计Agent 自动化评估体系 | 图片 0 张
+[68/184] 点击抓取 69d37dfa0000000023011740 ...
+    OK：大模型看！尝试！ | 图片 0 张
+[69/184] 点击抓取 69ccfd2b000000001a037b8a ...
+    OK：蚂蚁 AI应用开发 一面面经 | 图片 1 张
+[70/184] 点击抓取 69cd3bb8000000001a032a64 ...
+    OK：Flash Attention｜显存占用降低、速度更快 | 图片 9 张
+[71/184] 点击抓取 69d0facf00000000210388fa ...
+    OK：Vibecoding新手进阶：Git存档、回档、分支 | 图片 0 张
+[72/184] 点击抓取 69ca75500000000021012573 ...
+    OK：agent项目Agentic RAG和RAG有啥区别 | 图片 4 张
+[73/184] 点击抓取 69ca50ae0000000021010633 ...
+    OK：Query 和 Key 在注意力机制中长得几乎一模 | 图片 8 张
+[74/184] 点击抓取 69d1e4bd000000002202890e ...
+    OK：可以投简历，但你先别急 | 图片 9 张
+[75/184] 点击抓取 69d21f24000000001d018adb ...
+    OK：真实业务场景中 SFT 之后到底为什么做 RL? | 图片 9 张
+[76/184] 点击抓取 69d136d8000000002301c9a6 ...
+    OK：grpo loss理解 | 图片 5 张
+[77/184] 点击抓取 69d0c0ca000000001d01d780 ...
+    OK：关于rl训推不一致的问题 | 图片 9 张
+[78/184] 点击抓取 69d0ff9100000000230059bc ...
+    OK：Agentic RL项目求推荐 | 图片 1 张
+[79/184] 点击抓取 69ce68eb000000002301d24b ...
+    OK：GRPO训练经验分享总结 | 图片 4 张
+[80/184] 点击抓取 69b78d48000000001a0213f4 ...
+    OK：Claude Code必装插件从此告别查限额强迫症 | 图片 0 张
+[81/184] 点击抓取 69a12be1000000001a02f03f ...
+    OK：线性注意力进化史：从缺陷到混合架构突破 | 图片 0 张
+[82/184] 点击抓取 69d0cc72000000001b021d4f ...
+    OK：什么是大模型Harness？和大模型Memory什么 | 图片 5 张
+[83/184] 点击抓取 69a9b8fa0000000015032529 ...
+    OK：Codex-Windows桌面端上线！5分钟轻松上手！ | 图片 0 张
+[84/184] 点击抓取 69aaa08c000000000e03e4d3 ...
+    OK：深度揭秘Temperature = 0的非确定性 | 图片 0 张
+[85/184] 点击抓取 69cf9d41000000002103ab33 ...
+    OK：刚来实习听不懂大厂黑话的进😇超全名词解析 | 图片 0 张
+[86/184] 点击抓取 69ce5429000000001a023ece ...
+    OK：LLM训练中遇到reward hacking，怎么处理？ | 图片 0 张
+[87/184] 点击抓取 69b3e6c5000000001d01b9a6 ...
+    [点击失败] 69b3e6c5000000001d01b9a6: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69b3e6c5000000001d01b9a6
+[88/184] 点击抓取 69a975830000000028021515 ...
+    [点击失败] 69a975830000000028021515: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69a975830000000028021515
+[89/184] 点击抓取 69cf7859000000001d01bb3a ...
+    [点击失败] 69cf7859000000001d01bb3a: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69cf7859000000001d01bb3a
+[90/184] 点击抓取 69cdea53000000001e00c685 ...
+    [点击失败] 69cdea53000000001e00c685: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69cdea53000000001e00c685
+[91/184] 点击抓取 69c3dded000000001d01a3f4 ...
+    [点击失败] 69c3dded000000001d01a3f4: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c3dded000000001d01a3f4
+[92/184] 点击抓取 69cf9a23000000002301ee9e ...
+    [点击失败] 69cf9a23000000002301ee9e: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69cf9a23000000002301ee9e
+[93/184] 点击抓取 69cd9007000000002102f93c ...
+    [点击失败] 69cd9007000000002102f93c: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69cd9007000000002102f93c
+[94/184] 点击抓取 69cde64a000000002301126a ...
+    [点击失败] 69cde64a000000002301126a: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69cde64a000000002301126a
+[95/184] 点击抓取 69cba8b3000000002301efce ...
+    [点击失败] 69cba8b3000000002301efce: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69cba8b3000000002301efce
+[96/184] 点击抓取 69cf85a10000000023010a82 ...
+    [点击失败] 69cf85a10000000023010a82: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69cf85a10000000023010a82
+[97/184] 点击抓取 69cf74c10000000021039a76 ...
+    [点击失败] 69cf74c10000000021039a76: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69cf74c10000000021039a76
+[98/184] 点击抓取 69cd6838000000002103ba31 ...
+    [点击失败] 69cd6838000000002103ba31: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69cd6838000000002103ba31
+[99/184] 点击抓取 69c8e8a7000000001a026c2e ...
+    [点击失败] 69c8e8a7000000001a026c2e: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c8e8a7000000001a026c2e
+[100/184] 点击抓取 69bfbacb000000001d019107 ...
+    [点击失败] 69bfbacb000000001d019107: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69bfbacb000000001d019107
+[101/184] 点击抓取 69c92e85000000001a0303e3 ...
+    [点击失败] 69c92e85000000001a0303e3: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c92e85000000001a0303e3
+[102/184] 点击抓取 69ad811d000000002800b7a1 ...
+    [点击失败] 69ad811d000000002800b7a1: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69ad811d000000002800b7a1
+[103/184] 点击抓取 69b676fd000000002202802a ...
+    [点击失败] 69b676fd000000002202802a: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69b676fd000000002202802a
+[104/184] 点击抓取 69cb8c99000000001e00c100 ...
+    [点击失败] 69cb8c99000000001e00c100: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69cb8c99000000001e00c100
+[105/184] 点击抓取 69ca9cd0000000001f000c4a ...
+    [点击失败] 69ca9cd0000000001f000c4a: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69ca9cd0000000001f000c4a
+[106/184] 点击抓取 69c27feb000000002800ae41 ...
+    [点击失败] 69c27feb000000002800ae41: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c27feb000000002800ae41
+[107/184] 点击抓取 69c6071a000000002301e9b0 ...
+    [点击失败] 69c6071a000000002301e9b0: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c6071a000000002301e9b0
+[108/184] 点击抓取 69ca8832000000001f007943 ...
+    [点击失败] 69ca8832000000001f007943: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69ca8832000000001f007943
+[109/184] 点击抓取 69ca4c96000000001d01d3d3 ...
+    [点击失败] 69ca4c96000000001d01d3d3: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69ca4c96000000001d01d3d3
+[110/184] 点击抓取 69c9ee9b000000001f00537c ...
+    [点击失败] 69c9ee9b000000001f00537c: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c9ee9b000000001f00537c
+[111/184] 点击抓取 69c901d90000000023020328 ...
+    [点击失败] 69c901d90000000023020328: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c901d90000000023020328
+[112/184] 点击抓取 69c9ccfb000000001a02a25b ...
+    [点击失败] 69c9ccfb000000001a02a25b: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c9ccfb000000001a02a25b
+[113/184] 点击抓取 69c67fdc00000000230132ab ...
+    [点击失败] 69c67fdc00000000230132ab: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c67fdc00000000230132ab
+[114/184] 点击抓取 69c8fbfa0000000023005804 ...
+    [点击失败] 69c8fbfa0000000023005804: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c8fbfa0000000023005804
+[115/184] 点击抓取 69c4e6c1000000002302591d ...
+    [点击失败] 69c4e6c1000000002302591d: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c4e6c1000000002302591d
+[116/184] 点击抓取 69c605190000000023011aae ...
+    [点击失败] 69c605190000000023011aae: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c605190000000023011aae
+[117/184] 点击抓取 69aa7fc60000000015030655 ...
+    [点击失败] 69aa7fc60000000015030655: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69aa7fc60000000015030655
+[118/184] 点击抓取 69be4240000000001a0239fb ...
+    [点击失败] 69be4240000000001a0239fb: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69be4240000000001a0239fb
+[119/184] 点击抓取 69c3a732000000001a02e4cf ...
+    [点击失败] 69c3a732000000001a02e4cf: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c3a732000000001a02e4cf
+[120/184] 点击抓取 69c2c7c1000000001d0187c5 ...
+    [点击失败] 69c2c7c1000000001d0187c5: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c2c7c1000000001d0187c5
+[121/184] 点击抓取 69b917e500000000210102b0 ...
+    [点击失败] 69b917e500000000210102b0: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69b917e500000000210102b0
+[122/184] 点击抓取 69c2510c000000002102e12b ...
+    [点击失败] 69c2510c000000002102e12b: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c2510c000000002102e12b
+[123/184] 点击抓取 69a55587000000001b015dcd ...
+    [点击失败] 69a55587000000001b015dcd: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69a55587000000001b015dcd
+[124/184] 点击抓取 69c3dede000000001a02ff47 ...
+    [点击失败] 69c3dede000000001a02ff47: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c3dede000000001a02ff47
+[125/184] 点击抓取 69c3c702000000001f007491 ...
+    [点击失败] 69c3c702000000001f007491: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c3c702000000001f007491
+[126/184] 点击抓取 69c3c303000000002102e4cc ...
+    [点击失败] 69c3c303000000002102e4cc: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c3c303000000002102e4cc
+[127/184] 点击抓取 69b2684d000000000601d395 ...
+    [点击失败] 69b2684d000000000601d395: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69b2684d000000000601d395
+[128/184] 点击抓取 69c3d312000000001a022758 ...
+    [点击失败] 69c3d312000000001a022758: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c3d312000000001a022758
+[129/184] 点击抓取 69c35e1f000000002200101b ...
+    [点击失败] 69c35e1f000000002200101b: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c35e1f000000002200101b
+[130/184] 点击抓取 69c336090000000020039f8a ...
+    [点击失败] 69c336090000000020039f8a: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c336090000000020039f8a
+[131/184] 点击抓取 69c367c4000000001d01fc04 ...
+    [点击失败] 69c367c4000000001d01fc04: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c367c4000000001d01fc04
+[132/184] 点击抓取 69c351f2000000001a02de01 ...
+    [点击失败] 69c351f2000000001a02de01: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c351f2000000001a02de01
+[133/184] 点击抓取 69c10378000000002301ea36 ...
+    [点击失败] 69c10378000000002301ea36: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c10378000000002301ea36
+[134/184] 点击抓取 69c32cea000000002302171a ...
+    [点击失败] 69c32cea000000002302171a: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c32cea000000002302171a
+[135/184] 点击抓取 69a6f4e4000000001a037381 ...
+    [点击失败] 69a6f4e4000000001a037381: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69a6f4e4000000001a037381
+[136/184] 点击抓取 69c25e78000000001f00409b ...
+    [点击失败] 69c25e78000000001f00409b: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c25e78000000001f00409b
+[137/184] 点击抓取 69c204ac00000000220267b9 ...
+    [点击失败] 69c204ac00000000220267b9: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c204ac00000000220267b9
+[138/184] 点击抓取 69c0e0c9000000001b020fd8 ...
+    [点击失败] 69c0e0c9000000001b020fd8: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c0e0c9000000001b020fd8
+[139/184] 点击抓取 69c16d820000000022003e1b ...
+    [点击失败] 69c16d820000000022003e1b: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c16d820000000022003e1b
+[140/184] 点击抓取 69c1628e000000001d01d76f ...
+    [点击失败] 69c1628e000000001d01d76f: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69c1628e000000001d01d76f
+[141/184] 点击抓取 69be5f26000000002301d3d1 ...
+    [点击失败] 69be5f26000000002301d3d1: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69be5f26000000002301d3d1
+[142/184] 点击抓取 69bf9a84000000001f0013d1 ...
+    [点击失败] 69bf9a84000000001f0013d1: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69bf9a84000000001f0013d1
+[143/184] 点击抓取 69bf8c750000000022025109 ...
+    [点击失败] 69bf8c750000000022025109: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69bf8c750000000022025109
+[144/184] 点击抓取 69bfa540000000001a022276 ...
+    [点击失败] 69bfa540000000001a022276: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69bfa540000000001a022276
+[145/184] 点击抓取 69bbc34c000000001d01a6e2 ...
+    [点击失败] 69bbc34c000000001d01a6e2: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69bbc34c000000001d01a6e2
+[146/184] 点击抓取 69bfba6f000000001f00330f ...
+    [点击失败] 69bfba6f000000001f00330f: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69bfba6f000000001f00330f
+[147/184] 点击抓取 69bd5014000000001f001853 ...
+    [点击失败] 69bd5014000000001f001853: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69bd5014000000001f001853
+[148/184] 点击抓取 69b8a9d1000000002103847d ...
+    [点击失败] 69b8a9d1000000002103847d: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69b8a9d1000000002103847d
+[149/184] 点击抓取 69bab210000000001b023e04 ...
+    [点击失败] 69bab210000000001b023e04: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69bab210000000001b023e04
+[150/184] 点击抓取 69b686de0000000023013f5c ...
+    [点击失败] 69b686de0000000023013f5c: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69b686de0000000023013f5c
+[151/184] 点击抓取 69ac31f7000000000e00dde2 ...
+    [点击失败] 69ac31f7000000000e00dde2: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69ac31f7000000000e00dde2
+[152/184] 点击抓取 69b6cb04000000001a02abd9 ...
+    [点击失败] 69b6cb04000000001a02abd9: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69b6cb04000000001a02abd9
+[153/184] 点击抓取 69b761d1000000001a034499 ...
+    [点击失败] 69b761d1000000001a034499: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69b761d1000000001a034499
+[154/184] 点击抓取 69a4ac96000000001a020432 ...
+    [点击失败] 69a4ac96000000001a020432: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69a4ac96000000001a020432
+[155/184] 点击抓取 69b5748c0000000021004b09 ...
+    [点击失败] 69b5748c0000000021004b09: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69b5748c0000000021004b09
+[156/184] 点击抓取 69b421390000000021039d19 ...
+    [点击失败] 69b421390000000021039d19: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69b421390000000021039d19
+[157/184] 点击抓取 69a7e6ed000000001a02bbc9 ...
+    [点击失败] 69a7e6ed000000001a02bbc9: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69a7e6ed000000001a02bbc9
+[158/184] 点击抓取 69ad291b0000000015031aa2 ...
+    [点击失败] 69ad291b0000000015031aa2: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69ad291b0000000015031aa2
+[159/184] 点击抓取 69b3dfe60000000022029bdb ...
+    [点击失败] 69b3dfe60000000022029bdb: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69b3dfe60000000022029bdb
+[160/184] 点击抓取 69b41f02000000001a02a80c ...
+    [点击失败] 69b41f02000000001a02a80c: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69b41f02000000001a02a80c
+[161/184] 点击抓取 69b18559000000002603248e ...
+    [点击失败] 69b18559000000002603248e: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69b18559000000002603248e
+[162/184] 点击抓取 69a9762c0000000022033b31 ...
+    [点击失败] 69a9762c0000000022033b31: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69a9762c0000000022033b31
+[163/184] 点击抓取 69b17ff1000000000b0341e6 ...
+    [点击失败] 69b17ff1000000000b0341e6: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69b17ff1000000000b0341e6
+[164/184] 点击抓取 698eea30000000001a036417 ...
+    [点击失败] 698eea30000000001a036417: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 698eea30000000001a036417
+[165/184] 点击抓取 69b061e40000000022023dfa ...
+    [点击失败] 69b061e40000000022023dfa: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69b061e40000000022023dfa
+[166/184] 点击抓取 69aef583000000000e00cbc6 ...
+    [点击失败] 69aef583000000000e00cbc6: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69aef583000000000e00cbc6
+[167/184] 点击抓取 699e4dc10000000015023324 ...
+    [点击失败] 699e4dc10000000015023324: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 699e4dc10000000015023324
+[168/184] 点击抓取 69aba9800000000016009a6c ...
+    [点击失败] 69aba9800000000016009a6c: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69aba9800000000016009a6c
+[169/184] 点击抓取 69ae3f380000000015032eee ...
+    [点击失败] 69ae3f380000000015032eee: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69ae3f380000000015032eee
+[170/184] 点击抓取 69ac1455000000001d010945 ...
+    [点击失败] 69ac1455000000001d010945: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69ac1455000000001d010945
+[171/184] 69adb8c8000000001a01c6fd 已抓取过，跳过
+[172/184] 点击抓取 69aa9b2c0000000015032a37 ...
+    [点击失败] 69aa9b2c0000000015032a37: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69aa9b2c0000000015032a37
+[173/184] 点击抓取 69aa5b17000000001d02421e ...
+    [点击失败] 69aa5b17000000001d02421e: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69aa5b17000000001d02421e
+[174/184] 点击抓取 69a8488d00000000150215b2 ...
+    [点击失败] 69a8488d00000000150215b2: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69a8488d00000000150215b2
+[175/184] 69a91ed1000000001b01726e 已抓取过，跳过
+[176/184] 点击抓取 69a952bc000000001a036be6 ...
+    [点击失败] 69a952bc000000001a036be6: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69a952bc000000001a036be6
+[177/184] 点击抓取 6981e9a7000000001a031973 ...
+    [点击失败] 6981e9a7000000001a031973: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 6981e9a7000000001a031973
+[178/184] 点击抓取 69a7b5ca000000001d027cb3 ...
+    [点击失败] 69a7b5ca000000001d027cb3: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69a7b5ca000000001d027cb3
+[179/184] 点击抓取 69a701c200000000220200ab ...
+    [点击失败] 69a701c200000000220200ab: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69a701c200000000220200ab
+[180/184] 点击抓取 699bde90000000001a034add ...
+    [点击失败] 699bde90000000001a034add: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 699bde90000000001a034add
+[181/184] 点击抓取 69a59dc60000000015020148 ...
+    [点击失败] 69a59dc60000000015020148: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69a59dc60000000015020148
+[182/184] 点击抓取 69a5aea300000000220395ac ...
+    [点击失败] 69a5aea300000000220395ac: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69a5aea300000000220395ac
+[183/184] 点击抓取 69a5087f000000001d027c04 ...
+    [点击失败] 69a5087f000000001d027c04: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 69a5087f000000001d027c04
+[184/184] 点击抓取 699de8ce000000000e00c7a6 ...
+    [点击失败] 699de8ce000000000e00c7a6: Locator.click: Timeout 20000ms exceeded.
+Call log:
+waiting for locator("section.
+    [失败/无法浏览] 699de8ce000000000e00c7a6
+
+抓取完成：新增 49 条，跳过 39 条，失败 96 条。
+帖子数据在：/Users/severusma/CodeBuddy/20260612152057/collections/ai/data/notes
+接下来执行：python scraper/ocr_notes.py  对图片做 OCR。
+[2026-06-18 22:34:21] [ai] 抓取完成
+[2026-06-18 22:34:21] [ai] 步骤2/4 图片提取(VLM gemini-3-flash, 并发10) ...
+当前收藏夹：[ai] AI / LLM / Agent 技术
+图片提取引擎：vlm
+初始化引擎中（rapidocr 首次会下载模型；vlm 会校验配置）...
+共 88 条帖子，待处理 35 条、169 张图片，并发数 10。
+  已完成 10/169 张图片
+  已完成 20/169 张图片
+  已完成 30/169 张图片
+  已完成 40/169 张图片
+  已完成 50/169 张图片
+  已完成 60/169 张图片
+  已完成 70/169 张图片
+  已完成 80/169 张图片
+  已完成 90/169 张图片
+  已完成 100/169 张图片
+  已完成 110/169 张图片
+  已完成 120/169 张图片
+  已完成 130/169 张图片
+  已完成 140/169 张图片
+  已完成 150/169 张图片
+  已完成 160/169 张图片
+  已完成 169/169 张图片
+
+处理完成，已回填到 /Users/severusma/CodeBuddy/20260612152057/collections/ai/data/notes 的各 JSON 文件。
+接下来：把 data/notes/ 的内容交给对话里的大模型做知识点总结（见 README）。
+[2026-06-18 22:37:46] [ai] 图片提取完成
+[2026-06-18 22:37:46] [ai] 步骤3/4 知识点总结(claude-opus-4-6)，内部会自动发布 ...
+当前收藏夹：[ai] AI / LLM / Agent 技术
+总结模型：claude-opus-4-6（每批 8 条）
+帖子总数 88 条，其中新帖 56 条需要分析，其余 32 条复用已有提炼结果。
+提炼新帖第 1 批（8 条）...
+    [跳过该批] 解析失败：无法解析模型返回的 JSON
+提炼新帖第 2 批（8 条）...
+提炼新帖第 3 批（8 条）...
+提炼新帖第 4 批（8 条）...
+提炼新帖第 5 批（8 条）...
+提炼新帖第 6 批（8 条）...
+提炼新帖第 7 批（8 条）...
+汇总归类去重...
+    [LLM 请求异常] (第1次): Request timed out.
+    [LLM 请求异常] (第2次): Request timed out.
+    [LLM 请求异常] (第3次): Request timed out.
+Traceback (most recent call last):
+  File "/Users/severusma/CodeBuddy/20260612152057/scraper/summarize.py", line 264, in <module>
+    main()
+  File "/Users/severusma/CodeBuddy/20260612152057/scraper/summarize.py", line 233, in main
+    merged_out = llm.chat(SYSTEM_MERGE, merge_prompt)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/severusma/CodeBuddy/20260612152057/scraper/providers/text_llm_provider.py", line 92, in chat
+    raise RuntimeError(f"LLM 调用失败：{last_err}")
+RuntimeError: LLM 调用失败：Request timed out.
+[2026-06-18 23:05:04] [ai] [警告] 总结返回非0
+[2026-06-18 23:05:04] [ai] 步骤4/4 兜底再发布一次（确保 GitHub 已更新） ...
+同步所有收藏夹网页到 docs/ ...
+  已同步收藏夹 [ai] 到 docs/ai/
+  [跳过] 收藏夹 opensource 还没有 summary.json（未生成总结）
+已生成总导航页 docs/index.html（1 个收藏夹）

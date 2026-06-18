@@ -32,13 +32,15 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# 这几个目录在 main() 里按当前收藏夹重设（多收藏夹隔离）
 NOTES_DIR = ROOT / "data" / "notes"
-EXTRACTED_DIR = ROOT / "data" / "extracted"   # 每条帖子的提炼结果缓存（增量复用）
+EXTRACTED_DIR = ROOT / "data" / "extracted"
 OUTPUT_DIR = ROOT / "output"
-CONFIG_PATH = ROOT / "config.json"
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from providers.text_llm_provider import TextLLMProvider  # noqa: E402
+from collection_ctx import get_context  # noqa: E402
 
 
 # ============================================================
@@ -92,13 +94,6 @@ PROMPT_MERGE = """下面是逐条提炼出的知识点（JSON 数组）。请汇
 【逐条提炼结果】
 {extracted}
 """
-
-
-def load_config() -> dict:
-    if not CONFIG_PATH.exists():
-        print("未找到 config.json。")
-        sys.exit(1)
-    return json.load(open(CONFIG_PATH, encoding="utf-8"))
 
 
 def parse_json_loose(text: str):
@@ -160,7 +155,15 @@ def render_markdown(summary: dict) -> str:
 
 
 def main():
-    cfg = load_config()
+    # 解析 --collection，按当前收藏夹设置隔离目录
+    ctx = get_context()
+    global NOTES_DIR, EXTRACTED_DIR, OUTPUT_DIR
+    NOTES_DIR = ctx.notes_dir
+    EXTRACTED_DIR = ctx.extracted_dir
+    OUTPUT_DIR = ctx.output_dir
+    cfg = ctx.cfg
+    print(f"当前收藏夹：[{ctx.id}] {ctx.name}")
+
     sum_conf = cfg.get("summarization", {})
     if not sum_conf or sum_conf.get("enabled") is False:
         print("config.json 未启用 summarization（或 enabled=false）。")
@@ -170,7 +173,7 @@ def main():
 
     note_files = sorted(NOTES_DIR.glob("*.json"))
     if not note_files:
-        print("未找到帖子数据，请先运行抓取与图片提取。")
+        print(f"未找到帖子数据（{NOTES_DIR}），请先运行抓取与图片提取。")
         return
 
     llm = TextLLMProvider(sum_conf)
@@ -232,18 +235,19 @@ def main():
     if "topics" not in summary:
         summary = {"topics": summary if isinstance(summary, list) else []}
 
-    # 输出
+    # 输出（写入当前收藏夹的 output 目录，并确保有 index.html 网页）
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     with open(OUTPUT_DIR / "summary.json", "w", encoding="utf-8") as f:
         json.dump(summary, f, ensure_ascii=False, indent=2)
     with open(OUTPUT_DIR / "知识点总结.md", "w", encoding="utf-8") as f:
         f.write(render_markdown(summary))
+    ctx.ensure_web()  # 从模板复制 index.html 到该收藏夹 output（若没有）
 
     n_topics = len(summary.get("topics", []))
     n_points = sum(len(t.get("points", [])) for t in summary.get("topics", []))
     print(f"\n完成：{n_topics} 个主题，{n_points} 条知识点。")
-    print(f"已写入 output/summary.json 和 output/知识点总结.md")
-    print("用浏览器打开 output/index.html 即可按主题/质量筛选浏览。")
+    print(f"已写入 {OUTPUT_DIR}/summary.json 和 知识点总结.md")
+    print(f"用浏览器打开 {OUTPUT_DIR}/index.html 即可按主题/质量筛选浏览。")
 
     # 全自动发布：若 config 开启 publish.enabled 且 publish.auto，则自动推送到 GitHub
     pub = cfg.get("publish", {}) or {}

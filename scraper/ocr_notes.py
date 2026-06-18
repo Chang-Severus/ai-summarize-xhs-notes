@@ -21,28 +21,24 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-NOTES_DIR = ROOT / "data" / "notes"
-CONFIG_PATH = ROOT / "config.json"
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from providers import get_provider  # noqa: E402
-
-
-def load_config() -> dict:
-    if CONFIG_PATH.exists():
-        with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
-    # 没有 config 也能跑：默认用免费 OCR
-    return {"image_understanding": {"provider": "rapidocr"}}
+from collection_ctx import get_context  # noqa: E402
 
 
 def main():
+    # 解析 --collection，拿到当前收藏夹的隔离目录
+    ctx = get_context()
+    NOTES_DIR = ctx.notes_dir
+    print(f"当前收藏夹：[{ctx.id}] {ctx.name}")
+
     note_files = sorted(NOTES_DIR.glob("*.json"))
     if not note_files:
-        print("未找到帖子数据，请先运行 scraper/fetch_collection.py")
+        print(f"未找到帖子数据（{NOTES_DIR}），请先运行 fetch_collection.py --collection {ctx.id}")
         return
 
-    cfg = load_config()
+    cfg = ctx.cfg
     # 根据配置拿到图片引擎（rapidocr 本地OCR 或 vlm 大模型），上层逻辑通用
     provider_name = (cfg.get("image_understanding", {}) or {}).get("provider", "rapidocr")
     print(f"图片提取引擎：{provider_name}")

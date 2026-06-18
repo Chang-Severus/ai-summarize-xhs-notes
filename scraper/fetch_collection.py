@@ -39,36 +39,20 @@ except ImportError:
     sys.exit(1)
 
 
-# ---- 各种目录/文件路径（都基于项目根目录定位，换电脑也不受影响）----
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from collection_ctx import get_context  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent  # 项目根目录
-AUTH_DIR = ROOT / ".auth"          # 保存小红书登录态（cookie），下次免登录
-DATA_DIR = ROOT / "data"
-NOTES_DIR = DATA_DIR / "notes"     # 每条帖子的结构化 JSON
-IMAGES_DIR = DATA_DIR / "images"   # 下载的帖子图片
-CONFIG_PATH = ROOT / "config.json"
+
+# 以下目录在 main() 里会根据“当前收藏夹”重新赋值（多收藏夹隔离）。
+# 登录态 .auth 是全局共用的（同一个小红书账号）。
+AUTH_DIR = ROOT / ".auth"
+NOTES_DIR = ROOT / "data" / "notes"
+IMAGES_DIR = ROOT / "data" / "images"
 
 # 从小红书帖子 URL 里提取帖子唯一 ID（note_id）的正则。
 # 形如 /explore/65xxxx 或 /discovery/item/65xxxx，ID 是 16~32 位十六进制字符。
 NOTE_ID_RE = re.compile(r"/(?:explore|discovery/item)/([0-9a-fA-F]{16,32})")
-
-
-def load_config() -> dict:
-    if not CONFIG_PATH.exists():
-        print(f"未找到配置文件 {CONFIG_PATH}")
-        print("请先执行：cp config.example.json config.json，然后填写收藏夹地址。")
-        sys.exit(1)
-    with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-        cfg = json.load(f)
-    target = cfg.get("board_url") or cfg.get("collection_url")
-    if not target or "你的用户ID" in target:
-        print("请在 config.json 中填写真实的 collection_url 或 board_url（你的收藏夹页面地址）。")
-        sys.exit(1)
-    return cfg
-
-
-def ensure_dirs():
-    for d in (AUTH_DIR, NOTES_DIR, IMAGES_DIR):
-        d.mkdir(parents=True, exist_ok=True)
 
 
 def extract_note_id(url: str) -> str | None:
@@ -373,11 +357,29 @@ def parse_detail_from_page(page, note_id: str, url: str, cfg: dict) -> dict:
 
 
 def main():
-    cfg = load_config()
-    ensure_dirs()
-    target_url = cfg.get("board_url") or cfg.get("collection_url")
-    headless = bool(cfg.get("headless", False))
-    note_interval = float(cfg.get("note_interval_seconds", 4))
+    # 解析 --collection 参数，拿到当前收藏夹的配置与隔离目录
+    ctx = get_context()
+    ctx.ensure_dirs()
+    # 把模块级路径重设到当前收藏夹（下层函数都用这几个全局变量）
+    global AUTH_DIR, NOTES_DIR, IMAGES_DIR
+    AUTH_DIR = ctx.auth_dir
+    NOTES_DIR = ctx.notes_dir
+    IMAGES_DIR = ctx.images_dir
+
+    target_url = ctx.board_url
+    if not target_url:
+        print(f"收藏夹 [{ctx.id}] 未配置 board_url，请在 config.json 的 collections 里填写。")
+        return
+    print(f"当前收藏夹：[{ctx.id}] {ctx.name}")
+
+    headless = bool(ctx.get("headless", False))
+    note_interval = float(ctx.get("note_interval_seconds", 4))
+    cfg = ctx.coll  # 供 collect_all_note_ids 等读取 max_notes / scroll_pause_seconds
+    # 让滚动/上限参数也能回退到全局
+    for k in ("max_notes", "scroll_pause_seconds"):
+        if k not in cfg:
+            cfg[k] = ctx.cfg.get(k, {"max_notes": 200, "scroll_pause_seconds": 2.5}[k])
+    cfg["download_images"] = ctx.get("download_images", True)
 
     with sync_playwright() as p:
         state_path = AUTH_DIR / "state.json"   # 登录态文件

@@ -4,8 +4,9 @@ config.json
 # 登录态（含你的小红书 cookie）
 .auth/
 
-# 抓取下来的原始数据与图片
+# 抓取下来的原始数据与图片（旧的全局目录 + 多收藏夹隔离目录）
 data/
+collections/
 
 # Python
 __pycache__/
@@ -15,6 +16,9 @@ venv/
 
 # 系统
 .DS_Store
+
+# IDE 本地配置（不应进公开仓库）
+.codebuddy/
 
 # 说明：docs/ 是 GitHub Pages 发布目录（仅含网页和总结结果），不在忽略列表，会被推送。
 # 而 config.json / .auth / data 含 Key、登录态、原始数据，已忽略，不会上线。

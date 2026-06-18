@@ -1,14 +1,18 @@
 {
-  "_说明": "复制本文件为 config.json 后填写。收藏夹URL从小红书网页版打开你的收藏夹后地址栏复制。",
+  "_说明": "复制本文件为 config.json 后填写。多收藏夹：在 collections 里加项；运行脚本用 --collection <id> 指定。",
 
-  "collection_url": "https://www.xiaohongshu.com/user/profile/你的用户ID?xhsshare=&tab=fav",
+  "_collections说明": "你的收藏夹列表，每个独立隔离。board_url 从小红书网页版打开收藏夹后地址栏复制。新增收藏夹复制一项改 id/name/board_url 即可。",
+  "collections": [
+    {
+      "id": "ai",
+      "name": "AI / LLM / Agent 技术",
+      "board_url": "https://www.xiaohongshu.com/board/你的收藏夹ID?...",
+      "max_notes": 200,
+      "_max_notes说明": "该收藏夹最多抓多少条，防止一次抓太多触发风控"
+    }
+  ],
 
-  "_或者直接填收藏夹ID": "如果你能拿到收藏夹的 board/collection 链接，优先填这个",
-  "board_url": "",
-
-  "max_notes": 200,
-  "_max_notes说明": "最多抓取多少条，防止一次抓太多触发风控。上百条建议分2-3次抓。",
-
+  "_全局抓取参数说明": "所有收藏夹共用",
   "scroll_pause_seconds": 2.5,
   "_scroll_pause说明": "每次滚动加载后的等待秒数，越大越安全（越像真人）",
 
