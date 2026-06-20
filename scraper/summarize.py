@@ -97,24 +97,70 @@ PROMPT_MERGE = """下面是逐条提炼出的知识点（JSON 数组）。请汇
 
 
 def parse_json_loose(text: str):
-    """从模型输出里稳健地解析 JSON（去掉可能的 ```json 包裹）。"""
+    """
+    从模型输出里稳健地解析 JSON。
+    claude-opus 等模型常见问题：① 用 ```json 包裹；② 前后带解释文字；
+    ③ 输出多个代码块。这里做多层兜底，尽量不丢内容。
+    """
+    if not text:
+        raise ValueError("模型返回为空")
     t = text.strip()
-    t = re.sub(r"^```(json)?", "", t).strip()
-    t = re.sub(r"```$", "", t).strip()
-    # 尝试直接解析
-    try:
-        return json.loads(t)
-    except Exception:
-        pass
-    # 兜底：截取第一个 [ 或 { 到最后一个 ] 或 }
-    for l, r in (("[", "]"), ("{", "}")):
-        i, j = t.find(l), t.rfind(r)
-        if i != -1 and j != -1 and j > i:
-            try:
-                return json.loads(t[i:j + 1])
-            except Exception:
-                continue
+
+    # 1) 优先提取 ```json ... ``` 或 ``` ... ``` 代码块里的内容
+    fences = re.findall(r"```(?:json)?\s*(.*?)```", t, flags=re.DOTALL)
+    candidates = [f.strip() for f in fences if f.strip()]
+    # 2) 再把整段（去掉可能残留的围栏）也作为候选
+    stripped = re.sub(r"^```(json)?", "", t).strip()
+    stripped = re.sub(r"```$", "", stripped).strip()
+    candidates.append(stripped)
+    candidates.append(t)
+
+    # 逐个候选尝试直接解析
+    for c in candidates:
+        try:
+            return json.loads(c)
+        except Exception:
+            pass
+
+    # 3) 兜底：在所有候选里截取最外层 [..] 或 {..} 再解析
+    for c in candidates:
+        for l, r in (("[", "]"), ("{", "}")):
+            i, j = c.find(l), c.rfind(r)
+            if i != -1 and j != -1 and j > i:
+                frag = c[i:j + 1]
+                try:
+                    return json.loads(frag)
+                except Exception:
+                    # 4) 再兜底：去掉对象间可能多余的尾逗号
+                    try:
+                        return json.loads(re.sub(r",\s*([\]}])", r"\1", frag))
+                    except Exception:
+                        continue
     raise ValueError("无法解析模型返回的 JSON")
+
+
+def local_merge(extracted_all: list) -> dict:
+    """
+    本地兜底汇总（不调模型）：当模型汇总失败/超时时使用。
+    按每条提炼结果自带的 topic_hint 归类，保留所有知识点与来源，绝不让网页空白。
+    """
+    topics = {}
+    for item in extracted_all:
+        topic = (item.get("topic_hint") or "未分类").strip() or "未分类"
+        src = {
+            "note_id": item.get("source_note_id", ""),
+            "url": item.get("source_url", ""),
+            "title": item.get("source_title", ""),
+        }
+        quality = item.get("quality", "medium")
+        for p in item.get("points", []):
+            topics.setdefault(topic, []).append({
+                "point": p.get("point", ""),
+                "detail": p.get("detail", ""),
+                "quality": quality,
+                "sources": [src],
+            })
+    return {"topics": [{"topic": k, "points": v} for k, v in topics.items()]}
 
 
 def build_note_payload(note: dict) -> dict:
@@ -204,8 +250,15 @@ def main():
         try:
             arr = parse_json_loose(out)
         except Exception as e:
-            print(f"    [跳过该批] 解析失败：{e}")
-            continue
+            # 解析失败再给模型一次机会：强调“只输出 JSON 数组，不要任何解释/不要markdown围栏”
+            print(f"    [解析失败，重试一次] {e}")
+            retry_sys = SYSTEM_EXTRACT + " 必须直接输出 JSON 数组本身，禁止任何解释文字，禁止使用```代码块包裹。"
+            try:
+                out = llm.chat(retry_sys, prompt)
+                arr = parse_json_loose(out)
+            except Exception as e2:
+                print(f"    [跳过该批] 重试仍失败：{e2}")
+                continue
         if not isinstance(arr, list):
             continue
         # 按 note_id 落盘缓存，便于下次增量复用
@@ -226,14 +279,46 @@ def main():
         print("未提炼到任何结果，结束。")
         return
 
-    # ===== 阶段2：把所有提炼结果（新+旧缓存）一次性汇总、按主题归类、合并重复 =====
-    print("汇总归类去重...")
-    merge_prompt = PROMPT_MERGE.format(
-        extracted=json.dumps(extracted_all, ensure_ascii=False, indent=2))
-    merged_out = llm.chat(SYSTEM_MERGE, merge_prompt)
-    summary = parse_json_loose(merged_out)
-    if "topics" not in summary:
-        summary = {"topics": summary if isinstance(summary, list) else []}
+    # ===== 阶段2：把所有提炼结果（新+旧缓存）汇总、按主题归类、合并重复 =====
+    # 帖子多时一次性塞给模型容易超时/被截断，这里按上限分块汇总后再拼合，
+    # 并对汇总临时调大超时；最终失败则用本地 local_merge 兜底，保证一定有产出。
+    print(f"汇总归类去重（共 {len(extracted_all)} 条提炼结果）...")
+    summary = None
+    old_timeout = llm.timeout
+    llm.timeout = max(old_timeout, 300)  # 汇总更耗时，临时调到至少 300s
+    try:
+        # 分块：每块最多 40 条提炼结果，分别汇总，再合并各块 topics
+        CHUNK = 40
+        chunk_results = []
+        chunks = [extracted_all[i:i + CHUNK] for i in range(0, len(extracted_all), CHUNK)]
+        for ci, chunk in enumerate(chunks):
+            print(f"  汇总第 {ci + 1}/{len(chunks)} 块（{len(chunk)} 条）...")
+            mp = PROMPT_MERGE.format(
+                extracted=json.dumps(chunk, ensure_ascii=False, indent=2))
+            out = llm.chat(SYSTEM_MERGE, mp)
+            r = parse_json_loose(out)
+            if isinstance(r, dict) and "topics" in r:
+                chunk_results.append(r)
+            elif isinstance(r, list):
+                chunk_results.append({"topics": r})
+        # 合并各块的同名 topic
+        merged_topics = {}
+        for r in chunk_results:
+            for t in r.get("topics", []):
+                name = t.get("topic", "未分类")
+                merged_topics.setdefault(name, []).extend(t.get("points", []))
+        if merged_topics:
+            summary = {"topics": [{"topic": k, "points": v}
+                                  for k, v in merged_topics.items()]}
+    except Exception as e:
+        print(f"  [汇总调用失败] {e} —— 改用本地兜底归类（不丢任何知识点）。")
+    finally:
+        llm.timeout = old_timeout
+
+    # 兜底：模型汇总失败或结果为空时，用本地按 topic_hint 归类，绝不让网页空白
+    if not summary or not summary.get("topics"):
+        print("  使用本地兜底汇总（按 topic_hint 归类，保留全部知识点）。")
+        summary = local_merge(extracted_all)
 
     # 输出（写入当前收藏夹的 output 目录，并确保有 index.html 网页）
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

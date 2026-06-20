@@ -865,3 +865,8 @@ RuntimeError: LLM 调用失败：Request timed out.
   已同步收藏夹 [ai] 到 docs/ai/
   [跳过] 收藏夹 opensource 还没有 summary.json（未生成总结）
 已生成总导航页 docs/index.html（1 个收藏夹）
+✅ 已推送到 GitHub。若已配置 Pages(main/docs)，稍等 1~2 分钟即可看到更新。
+[2026-06-18 23:43:02] [opensource] 发布完成
+[2026-06-18 23:43:02] ==================== 收藏夹 [opensource] 结束 ====================
+[2026-06-18 23:43:03] ########## 全部任务完成 ##########
+[2026-06-18 23:43:03] GitHub Pages 总导航： https://chang-severus.github.io/ai-summarize-xhs-notes/
