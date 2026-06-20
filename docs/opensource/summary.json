@@ -4,8 +4,8 @@
       "topic": "Agent设计",
       "points": [
         {
-          "point": "将Claude Code桥接微信，实现内置时间系统、随机轮询唤醒、本地提醒队列和自动日记系统",
-          "detail": "AI自动为每条消息添加时间戳感知真实时间，1-60分钟随机唤醒后自主决定行为（发微信/写日记/调用tool），可给未来的自己设定定时器（如通过米家MCP开窗帘放歌），每晚自动写日记到本地不消耗额外token。项目已开源。",
+          "point": "将Claude Code桥接微信，实现时间感知、随机轮询唤醒、本地提醒队列和自动日记系统",
+          "detail": "内置时间系统自动为每条消息添加时间戳，使大模型感知真实时间并生成生活轨迹时间轴报表。随机轮询唤醒机制让AI在1-60分钟随机时间点被唤醒，自主决定行为（发微信、写日记、调用tool等）。AI可给未来的自己设定定时器（如通过米家MCP开窗帘放歌）。日记系统每晚自动写日记到本地，不依赖MCP，不消耗额外token。项目已开源。",
           "quality": "high",
           "sources": [
             {
@@ -17,7 +17,7 @@
         },
         {
           "point": "用LangGraph+deepagents构建自动汇报智能体，支持自动翻页、被打断回答问题、根据提问跳转页码",
-          "detail": "Agent框架用LangGraph+deepagents（定制化更高），音色克隆用minimax，ASR用本地部署whisper（显存不到4G），LLM用GPT-5.4，流式输出和缓存机制优化让语音输出更流畅，整体开发约两天。",
+          "detail": "Agent框架用LangGraph+deepagents（定制化更高），音色克隆用minimax，ASR用本地部署whisper（显存不到4G，笔记本4070可实时识别），LLM用GPT-5.4，开发工具VS Code+CodeX，整体开发约两天。流式输出和缓存机制优化让语音输出更流畅。",
           "quality": "high",
           "sources": [
             {
@@ -28,8 +28,8 @@
           ]
         },
         {
-          "point": "以Git为中心的多执行器任务同步架构设计",
-          "detail": "手机→飞书→火山引擎OpenClaw→Git仓库→本地Mac(Trae执行)的完整链路，Git作为single source of truth解决云端与本地文件系统隔离问题。多执行器需先原子标记任务为'进行中'再执行，防止冲突。",
+          "point": "Vibe coding时代效率优化边际收益极高，应打造个性化效率系统；以Git为中心的多执行器任务同步架构",
+          "detail": "胡渊鸣提出软件开发成本趋于零，标准化软件逐渐失去意义。具体AI编程工作流技巧包括ralph loop、git worktree、progress.md、claude.md等。设计了手机→飞书→火山引擎OpenClaw→Git仓库→本地Mac(Trae执行)的完整链路，Git作为single source of truth，多执行器需先原子标记任务为'进行中'再执行防止冲突。管AI比管人更能提高领导力，反馈速度提升100倍。",
           "quality": "high",
           "sources": [
             {
@@ -40,8 +40,32 @@
           ]
         },
         {
-          "point": "Clawdbot是Mac上的AI Agent，能自动操控浏览器完成多步骤任务并具备环境感知能力",
-          "detail": "实测自动完成Gmail注册全流程，能感知页面跳转状态自主决策下一步操作，仅在需要手机扫码验证时请求用户介入（Human-in-the-loop），任务完成后结构化输出账号信息。",
+          "point": "通过飞书/TG将Codex接入手机，Codex高权限模式可串联查日志、改代码、远程推理、服务器部署等完整流程",
+          "detail": "在外时可直接发消息让本地环境整理运行日志、汇总任务状态、返回报错信息、给出排查建议。核心架构为：飞书/TG → 本机Codex → 可连服务器。给到完整权限后可完成网站部署全链路（页面开发、Nginx配置、HTTPS证书、进程守护等）。",
+          "quality": "medium",
+          "sources": [
+            {
+              "note_id": "69aa48dc0000000022031bf5",
+              "url": "https://www.xiaohongshu.com/explore/69aa48dc0000000022031bf5?xsec_token=ABOsEIl3Qd-V28wZO9YPFeN_NTkeRFlhvVXB80YorHh6k=&xsec_source=pc_user",
+              "title": "GPT-5.4 来了，我把 Codex 接进了手机"
+            }
+          ]
+        },
+        {
+          "point": "通过微信远程控制Codex Agent执行电脑操作，使用ACP协议通信，支持多模态输入",
+          "detail": "通过 npx @zed-industries/codex-acp 启动Agent，使用ACP协议(protocol v1)建立会话。Agent可接收微信消息（含图片多模态输入），执行文件系统操作等工具调用，支持/stop等特定指令，日志记录完整的推理与响应循环。",
+          "quality": "medium",
+          "sources": [
+            {
+              "note_id": "69ef815b000000003701e049",
+              "url": "https://www.xiaohongshu.com/explore/69ef815b000000003701e049?xsec_token=ABp2zP1-u52Ak4Q5znCQZoQ8uXTybN0b9Ii6Ly_VwyE1Y=&xsec_source=pc_user",
+              "title": "微信远程控制codex进行电脑操作"
+            }
+          ]
+        },
+        {
+          "point": "Clawdbot是Mac上的AI Agent，能自动操控浏览器完成多步骤任务，具备环境感知和自主决策能力",
+          "detail": "实测自动打开Chrome完成Gmail注册全流程，仅在需要手机扫码验证时请求用户介入（Human-in-the-loop）。能感知页面跳转状态并在任务完成后结构化输出账号信息交付用户。",
           "quality": "medium",
           "sources": [
             {
@@ -53,7 +77,7 @@
         },
         {
           "point": "miniagent是极简AI Agent项目，具备文件操作、终端使用、自动制造工具和MCP客户端集成能力",
-          "detail": "Agent遇到无法解决的问题会尝试写代码解决；工具集按功能分类支持动态热重载（toys/file_ops/web_ops等模块），使用DeepSeek API作为核心模型。",
+          "detail": "Agent遇到无法解决的问题会尝试写代码解决；支持自动数据分析；集成MCP客户端可访问MCP服务器扩展应用。工具集按功能分类（toys/file_ops/web_ops等）支持动态热重载，使用DeepSeek API作为核心模型。",
           "quality": "medium",
           "sources": [
             {
@@ -64,32 +88,8 @@
           ]
         },
         {
-          "point": "通过微信远程控制Codex Agent执行电脑操作，使用ACP协议通信",
-          "detail": "通过 npx @zed-industries/codex-acp 启动Agent，支持多模态输入（含图片），执行文件系统操作等工具调用并将结果回复到微信。",
-          "quality": "medium",
-          "sources": [
-            {
-              "note_id": "69ef815b000000003701e049",
-              "url": "https://www.xiaohongshu.com/explore/69ef815b000000003701e049?xsec_token=ABp2zP1-u52Ak4Q5znCQZoQ8uXTybN0b9Ii6Ly_VwyE1Y=&xsec_source=pc_user",
-              "title": "微信远程控制codex进行电脑操作"
-            }
-          ]
-        },
-        {
-          "point": "通过飞书/TG将Codex接入手机，高权限模式下可串联查日志、改代码、远程推理、服务器部署等完整流程",
-          "detail": "核心架构为飞书/TG → 本机Codex → 可连服务器。给到完整权限后可执行网站部署全链路（页面开发、Nginx配置、HTTPS证书、进程守护等）。",
-          "quality": "medium",
-          "sources": [
-            {
-              "note_id": "69aa48dc0000000022031bf5",
-              "url": "https://www.xiaohongshu.com/explore/69aa48dc0000000022031bf5?xsec_token=ABOsEIl3Qd-V28wZO9YPFeN_NTkeRFlhvVXB80YorHh6k=&xsec_source=pc_user",
-              "title": "GPT-5.4 来了，我把 Codex 接进了手机"
-            }
-          ]
-        },
-        {
-          "point": "用OpenClaw实现AI日报的全自动生成与发布",
-          "detail": "模型从海量资讯中自动抓取筛选最新内容，生成AI圈日报、财经日报等多个频道，每天早上5:00定时更新，已实现77期AI日报的持续自动化产出，涵盖资讯抓取、内容生成、音频播客发布的完整链路。",
+          "point": "用OpenClaw实现AI日报的全自动生成与发布，涵盖资讯抓取、内容生成、音频播客发布完整链路",
+          "detail": "模型从海量资讯中自动抓取筛选最新内容，生成AI圈日报、财经日报、朝闻日报等多个频道，每天早上5:00定时更新。已实现77期AI日报、33期朝闻日报、25期财经日报的持续自动化产出。",
           "quality": "medium",
           "sources": [
             {
@@ -113,7 +113,7 @@
         },
         {
           "point": "可通过开源项目clone Claude Code源码并本地部署，用cc switch切换不同模型验证框架vs模型的贡献",
-          "detail": "源码地址为github.com/Janlaywss/cloud-code或instructkr/claude-code，可将代码喂给Codex让其指导部署，通过cc switch+官方CLI切换模型。",
+          "detail": "源码地址为github.com/Janlaywss/cloud-code或instructkr/claude-code，可将代码喂给Codex让其指导部署，通过cc switch+官方CLI切换模型，从而区分Claude Code的强大是来自框架设计还是opus模型本身。",
           "quality": "medium",
           "sources": [
             {
@@ -130,31 +130,7 @@
       "points": [
         {
           "point": "OverSearchGuard通过冲突感知的证据稀释方案，将RAG复杂冲突场景准确率从14.3%提升至94.3%",
-          "detail": "作为检索后置插件无需微调模型，bea_fallback策略可进一步达到97.0%准确率，同时Token消耗降低约78%。TPC指标从3428.8降至113.9，每个正确答案的Token成本降低30倍。",
-          "quality": "high",
-          "sources": [
-            {
-              "note_id": "6976fe5b000000000d00844c",
-              "url": "https://www.xiaohongshu.com/explore/6976fe5b000000000d00844c?xsec_token=ABO-4222K3ksi0wx4LZcqXBgTpCsS0EaLzRbIU9SFpMl0=&xsec_source=pc_user",
-              "title": "RAG准确率14%跃升至94%，终结Agent搜索致幻"
-            }
-          ]
-        },
-        {
-          "point": "CACT算法通过三重机制重塑证据概率分布",
-          "detail": "包括非线性信源截断（阻断长尾噪音频率叠加劫持注意力）、时序加权衰减（在过时权威与最新报道间寻找均衡）、逻辑负采样（对包含显式矛盾的候选事实施加惩罚）。",
-          "quality": "high",
-          "sources": [
-            {
-              "note_id": "6976fe5b000000000d00844c",
-              "url": "https://www.xiaohongshu.com/explore/6976fe5b000000000d00844c?xsec_token=ABO-4222K3ksi0wx4LZcqXBgTpCsS0EaLzRbIU9SFpMl0=&xsec_source=pc_user",
-              "title": "RAG准确率14%跃升至94%，终结Agent搜索致幻"
-            }
-          ]
-        },
-        {
-          "point": "BEA实现预算约束下的自适应推理，证据分批加载而非一次性注入",
-          "detail": "以几何级数分批加载证据，仅在当前熵不足以支持确定性结论时才支付额外计算成本，通过语义漂移监控实现稳定性收敛判据。",
+          "detail": "作为检索后置插件无需微调模型，bea_fallback策略可进一步达到97.0%准确率，同时Token消耗降低约78%。CACT算法通过三重机制（非线性信源截断、时序加权衰减、逻辑负采样）重塑证据概率分布。BEA实现预算约束下的自适应推理，以几何级数分批加载证据，仅在当前熵不足以支持确定性结论时才支付额外计算成本。TPC指标从3428.8降至113.9，每个正确答案的Token成本降低30倍。实验基于google/flan-t5-small模型。",
           "quality": "high",
           "sources": [
             {
@@ -170,32 +146,8 @@
       "topic": "模型微调与训练",
       "points": [
         {
-          "point": "Karpathy的nanochat项目提供从tokenizer到预训练、指令微调、推理、Web聊天界面的端到端LLM训练全流程",
-          "detail": "整个项目代码仅几千行，使用PyTorch原生写法，无复杂框架封装，训练循环、数据加载、loss计算全部透明可读。追求可复现而非SOTA，结构干净可方便添加多任务、工具调用、RAG、Agent等机制。GitHub地址：github.com/karpathy/nanochat",
-          "quality": "high",
-          "sources": [
-            {
-              "note_id": "6974cf810000000021031b08",
-              "url": "https://www.xiaohongshu.com/explore/6974cf810000000021031b08?xsec_token=ABC8g7ufg6ClsWeus9ZRujUJ-1IRN0p_3VxuJ10g0eWpY=&xsec_source=pc_user",
-              "title": "LLM项目推荐：nanochat"
-            }
-          ]
-        },
-        {
-          "point": "nanochat的数据设计混合了对话、数学题、拼写任务、identity数据",
-          "detail": "通过混合数据训练可直观感受数据配方对模型行为的影响，数据比例变化会改变模型的性格和能力表现。",
-          "quality": "high",
-          "sources": [
-            {
-              "note_id": "6974cf810000000021031b08",
-              "url": "https://www.xiaohongshu.com/explore/6974cf810000000021031b08?xsec_token=ABC8g7ufg6ClsWeus9ZRujUJ-1IRN0p_3VxuJ10g0eWpY=&xsec_source=pc_user",
-              "title": "LLM项目推荐：nanochat"
-            }
-          ]
-        },
-        {
-          "point": "阶跃星辰开源Step 3.5 Flash全量SFT数据集，含17B token、完整训练代码和复现实验",
-          "detail": "数据集包含高质量多轮对话及思维链(CoT)推理过程，配套Tokenizer、预处理训练分片，适配SteptronOss训练框架可直接训练。已全面开源预训练权重、中训练权重、训练框架和SFT数据集。Reddit评价性能接近Qwen 397B但模型大小仅为其一半。",
+          "point": "阶跃星辰开源Step 3.5 Flash全量SFT数据集（17B token），含完整训练代码、预训练权重、中训练权重和训练框架",
+          "detail": "数据集包含高质量多轮对话及思维链(CoT)推理过程，配套Tokenizer、预处理训练分片，适配SteptronOss训练框架可直接训练。开源不到24小时登顶HuggingFace Dataset Trending第一。Reddit社区评价：性能接近Qwen 397B但模型大小仅为其一半，生成质量优于Qwen 3.5，但存在过度思考和速度较慢的问题。",
           "quality": "high",
           "sources": [
             {
@@ -204,39 +156,27 @@
               "title": "阶跃星辰开源全量 SFT 数据集，欢迎使用！"
             }
           ]
+        },
+        {
+          "point": "Karpathy的nanochat项目提供从tokenizer到预训练、指令微调、推理、Web聊天界面的端到端LLM训练全流程",
+          "detail": "整个项目代码仅几千行，使用PyTorch原生写法，无复杂框架封装，训练循环、数据加载、loss计算全部透明可读。数据设计混合了对话、数学题、拼写任务、identity数据，通过混合数据训练可直观感受数据配方对模型行为的影响。追求可复现而非SOTA，结构干净可方便添加多任务、工具调用、RAG、Agent等机制。GitHub地址：github.com/karpathy/nanochat",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "6974cf810000000021031b08",
+              "url": "https://www.xiaohongshu.com/explore/6974cf810000000021031b08?xsec_token=ABC8g7ufg6ClsWeus9ZRujUJ-1IRN0p_3VxuJ10g0eWpY=&xsec_source=pc_user",
+              "title": "LLM项目推荐：nanochat"
+            }
+          ]
         }
       ]
     },
     {
-      "topic": "Scaling Law/LLM研究",
+      "topic": "Scaling Law与LLM研究",
       "points": [
         {
-          "point": "IKP（不可压缩知识探针）方法可通过事实知识准确率估算闭源模型参数量",
-          "detail": "核心逻辑：推理能力可通过蒸馏压缩到小模型，但事实知识不行。89个开源模型上IKP准确率与log(参数量)的拟合R²=0.917。据此估算：GPT-5.5≈9T，Claude Opus 4.7≈4T，GPT-5.4≈2.2T，Claude Sonnet 4.6≈1.7T，Gemini 2.5 Pro≈1.2T（90%置信区间为0.3-3倍）。",
-          "quality": "high",
-          "sources": [
-            {
-              "note_id": "69f19c09000000003502bf96",
-              "url": "https://www.xiaohongshu.com/explore/69f19c09000000003502bf96?xsec_token=ABIEwk4PhRGIKzHRfQ4VA3qfX-f_AxmWCVvF7plU7OkrA=&xsec_source=pc_user",
-              "title": "各家闭源模型的规模被扒出来了"
-            }
-          ]
-        },
-        {
-          "point": "事实容量不会随时间被压缩，以p<10⁻¹⁵的显著性拒绝了Densing Law",
-          "detail": "跨越3年的96个开源模型上，IKP时间系数在统计上为零，控制参数量后模型性能无显著时间趋势，观测数据与Densing Law差距达13σ。",
-          "quality": "high",
-          "sources": [
-            {
-              "note_id": "69f19c09000000003502bf96",
-              "url": "https://www.xiaohongshu.com/explore/69f19c09000000003502bf96?xsec_token=ABIEwk4PhRGIKzHRfQ4VA3qfX-f_AxmWCVvF7plU7OkrA=&xsec_source=pc_user",
-              "title": "各家闭源模型的规模被扒出来了"
-            }
-          ]
-        },
-        {
-          "point": "研究人员引用次数与被AI模型识别率正相关",
-          "detail": "345位研究人员的Spearman ρ=0.575(p<10⁻⁶)，高引用低识别率的离群值主要由OpenAlex姓名冲突导致。",
+          "point": "IKP（不可压缩知识探针）方法可通过事实知识准确率估算闭源模型参数量，89个开源模型上R²=0.917",
+          "detail": "核心逻辑：推理能力可通过蒸馏压缩到小模型，但事实知识不行。IKP数据集包含1400个问题、7层稀有度，在188个模型上测试。据此估算：GPT-5.5≈9T，Claude Opus 4.7≈4T，GPT-5.4≈2.2T，Claude Sonnet 4.6≈1.7T，Gemini 2.5 Pro≈1.2T（90%置信区间为0.3-3倍）。事实容量不会随时间被压缩，跨越3年的96个开源模型上以p<10⁻¹⁵的显著性拒绝了Densing Law预测，观测数据与Densing Law差距达13σ。研究人员引用次数与被AI模型识别率正相关（Spearman ρ=0.575, p<10⁻⁶）。",
           "quality": "high",
           "sources": [
             {
@@ -253,31 +193,7 @@
       "points": [
         {
           "point": "LBS-IntentBench是首个基于大规模真实匿名化出行数据构建的隐式意图评测基准",
-          "detail": "将评估范式从遵循显式指令转变为隐式的、依赖上下文且受物理约束的意图推理。核心发现：模型主要局限性已不是静态地理知识匮乏，而是无法在长周期动态序列中保持基于因果和物理现实的严密推理。",
-          "quality": "high",
-          "sources": [
-            {
-              "note_id": "69fc39780000000035039f67",
-              "url": "https://www.xiaohongshu.com/explore/69fc39780000000035039f67?xsec_token=ABHPcNYnHbkOhZRRlYh4Zb5e0SKkQngZVL6Im3xdpiNzc=&xsec_source=pc_user",
-              "title": "智能时空思考： LBS-IntentBench 正式开源"
-            }
-          ]
-        },
-        {
-          "point": "LBS-IntentBench评测体系包含三层递进任务：事实→决策→意图",
-          "detail": "Task 3通用出行任务（7个子任务含POI语义理解、轨迹检索、反事实异常检测等）；Task 2上下文约束推断（植入时序违背、因果倒置等干扰项）；Task 1出行意图推断（从隐式信号中排序用户潜在意图）。",
-          "quality": "high",
-          "sources": [
-            {
-              "note_id": "69fc39780000000035039f67",
-              "url": "https://www.xiaohongshu.com/explore/69fc39780000000035039f67?xsec_token=ABHPcNYnHbkOhZRRlYh4Zb5e0SKkQngZVL6Im3xdpiNzc=&xsec_source=pc_user",
-              "title": "智能时空思考： LBS-IntentBench 正式开源"
-            }
-          ]
-        },
-        {
-          "point": "LBS-IntentBench真值设计采用LLM生成+后验行为记录+专家审核流程",
-          "detail": "屏蔽未来数据，专家一致率要求>80%。选择题中系统性植入时空陷阱、意图履行陷阱和上下文陷阱等干扰项。数据覆盖微观行为序列和宏观物理常识两个维度。",
+          "detail": "将评估范式从遵循显式指令转变为隐式的、依赖上下文且受物理约束的意图推理。核心发现：模型主要局限性已不是静态地理知识匮乏，而是无法在长周期动态序列中保持基于因果和物理现实的严密推理。评测体系包含三层递进任务（事实→决策→意图），数据覆盖微观行为序列和宏观物理常识两个维度，真值设计采用LLM生成+后验行为记录+专家审核流程（专家一致率>80%），系统性植入时空陷阱、意图履行陷阱和上下文陷阱等干扰项。评价指标包括Hit@5、Accuracy和F1-score。",
           "quality": "high",
           "sources": [
             {
@@ -290,23 +206,11 @@
       ]
     },
     {
-      "topic": "Prompt工程",
+      "topic": "Prompt工程与Skill设计",
       "points": [
         {
-          "point": "华夏老祖宗.skill是纯Markdown的Claude Code Skill，包含24个中国古典思维框架，零依赖不联网",
-          "detail": "覆盖决策、复杂任务拆解、职场博弈、情绪管理等6大场景，用角色化口吻（韩非子、禅宗大师、庖丁等）替代通用AI的'正确废话'，直接指出认知偏差并给出融合方案。安装命令为clawhub install huaxia-sage。",
-          "quality": "medium",
-          "sources": [
-            {
-              "note_id": "69cc9882000000001e00e3ab",
-              "url": "https://www.xiaohongshu.com/explore/69cc9882000000001e00e3ab?xsec_token=AB2McnRwWxvnYnpuKbehWx1jbmxko5mGII-54JOasU9lU=&xsec_source=pc_user",
-              "title": "华夏老祖宗.skill，专治各种纠结与内耗"
-            }
-          ]
-        },
-        {
-          "point": "anti-distill skill可自动将skill文档中的核心隐性知识替换为正确但无用的专业废话",
-          "detail": "输出清洗版和私人备份两份文件，支持轻度/中度/重度三种清洗强度。内置针对Work Skill类、Persona类、通用知识类三种内容类型的专用处理策略。在Claude Code或OpenClaw环境中输入/anti-distill命令即可运行。",
+          "point": "anti-distill skill可自动将skill文档中的核心隐性知识替换为正确但无用的专业废话，保护个人踩坑经验",
+          "detail": "输出清洗版和私人备份两份文件。支持轻度(保留80%)、中度(保留60%)、重度(保留40%)三种清洗强度。内置针对Work Skill类、Persona类、通用知识类三种内容类型的专用处理策略。在Claude Code或OpenClaw环境中输入/anti-distill命令即可运行。",
           "quality": "medium",
           "sources": [
             {
@@ -317,8 +221,20 @@
           ]
         },
         {
+          "point": "华夏老祖宗.skill是纯Markdown的Claude Code Skill，包含24个中国古典思维框架，用角色化口吻替代通用AI的泛泛建议",
+          "detail": "覆盖决策、复杂任务拆解、职场博弈、情绪管理等6大场景，每个框架有独特分析方法和专属半文半白口吻。通过韩非子、禅宗大师、庖丁等角色化表达直接指出认知偏差并给出融合方案。安装命令为clawhub install huaxia-sage。",
+          "quality": "medium",
+          "sources": [
+            {
+              "note_id": "69cc9882000000001e00e3ab",
+              "url": "https://www.xiaohongshu.com/explore/69cc9882000000001e00e3ab?xsec_token=AB2McnRwWxvnYnpuKbehWx1jbmxko5mGII-54JOasU9lU=&xsec_source=pc_user",
+              "title": "华夏老祖宗.skill，专治各种纠结与内耗"
+            }
+          ]
+        },
+        {
           "point": "crush.skill通过导入聊天记录生成模仿对方说话风格的AI，并用贝叶斯概率分析对方真实意图",
-          "detail": "核心分析维度包括先验置信度、时间衰减权重、情绪强度。基于依恋理论诊断对方依恋类型并给出对应策略，内置十种关系瓶颈诊断和聊天演习模式。",
+          "detail": "支持微信、iMessage、短信、截图等多种输入。核心分析维度包括先验置信度、时间衰减权重、情绪强度。基于依恋理论诊断对方依恋类型（回避型/焦虑型/安全型/恐惧回避型）并给出对应策略。内置十种关系瓶颈诊断，从权力博弈、心理防御、双向互动三个维度识别关系卡点，每种提供对应破局话术。另有聊天演习模式可模仿对方语气进行话术预演。",
           "quality": "medium",
           "sources": [
             {
@@ -331,117 +247,11 @@
       ]
     },
     {
-      "topic": "AI工作流与效率系统",
-      "points": [
-        {
-          "point": "Vibe coding时代，优化效率的边际收益极高，软件开发成本趋于零",
-          "detail": "胡渊鸣提到的iPhone SSH派活、Web管理todos、语音API等均基于此思路。有领域技术能力的人应打造个性化的个人效率系统/工作系统，个人笔记/知识管理系统在AI时代成为高ROI投资。",
-          "quality": "high",
-          "sources": [
-            {
-              "note_id": "6992b43f000000000a02d985",
-              "url": "https://www.xiaohongshu.com/explore/6992b43f000000000a02d985?xsec_token=ABs8J77YIphTfFAGNF5sJUbp_dxbiSgCFATiO8A5b2flU=&xsec_source=pc_user",
-              "title": "建议所有人都精读胡渊鸣的最新文章"
-            }
-          ]
-        },
-        {
-          "point": "AI coding实操技巧：ralph loop、git worktree、progress.md、claude.md等",
-          "detail": "这些是胡渊鸣文章中提到的具体AI编程工作流技巧，用于管理多个Claude Code并行工作。管AI比管人更能提高领导力，反馈速度提升100倍。",
-          "quality": "high",
-          "sources": [
-            {
-              "note_id": "6992b43f000000000a02d985",
-              "url": "https://www.xiaohongshu.com/explore/6992b43f000000000a02d985?xsec_token=ABs8J77YIphTfFAGNF5sJUbp_dxbiSgCFATiO8A5b2flU=&xsec_source=pc_user",
-              "title": "建议所有人都精读胡渊鸣的最新文章"
-            }
-          ]
-        },
-        {
-          "point": "AI提效的同时需警惕深度思考能力退化",
-          "detail": "当不再自己构建完整复现流程而全程交给AI后，可能丧失独立推动任务、规划下一步的能力，需要有意识地保护深度思考能力。",
-          "quality": "medium",
-          "sources": [
-            {
-              "note_id": "69c9103c000000001e00e67d",
-              "url": "https://www.xiaohongshu.com/explore/69c9103c000000001e00e67d?xsec_token=ABSvtUOOZu5HIoeGXDNrkcemwTBIrY0_IdAEL3it_p7JY=&xsec_source=pc_user",
-              "title": "挑战10min复现一篇论文！（续）"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "topic": "工具与框架",
-      "points": [
-        {
-          "point": "通过Codex自带的skill creator可一键从GitHub部署第三方skill，支持对话式指令动态安装扩展",
-          "detail": "使用$skill-creator命令加GitHub仓库名即可安装，通过$前缀调用skills，@引用文件，/执行命令。示例中生成了多模态RAG系统架构图。",
-          "quality": "medium",
-          "sources": [
-            {
-              "note_id": "69dda63a0000000022024520",
-              "url": "https://www.xiaohongshu.com/explore/69dda63a0000000022024520?xsec_token=ABBArpNrbzftITf6iNmgieC1_7wWjfdmpuYmrgoITlW6s=&xsec_source=pc_user",
-              "title": "北理大二｜在codex装了生成svg格式的skill"
-            }
-          ]
-        },
-        {
-          "point": "bagu_killer是面经采集与归并系统，通过题目级语义归并和高频统计输出高频拷打题库",
-          "detail": "系统通过关键词+时间窗+watermark做断点续传抓取，经帖子级去重、广告过滤、图片OCR、题目抽取、语义归并全链路处理。已有AI Agent方向版本《烤面》，支持一键daily sync。",
-          "quality": "medium",
-          "sources": [
-            {
-              "note_id": "69ede77f0000000038022a5d",
-              "url": "https://www.xiaohongshu.com/explore/69ede77f0000000038022a5d?xsec_token=ABOHgtp5X742J9FuTXeyBydgdS-Yt2xKwsDKCg9iIor24=&xsec_source=pc_user",
-              "title": "清华学子遭八股痛击 卧薪尝胆开发采集神器"
-            }
-          ]
-        },
-        {
-          "point": "InterviewForge是开源面试复盘工具，可将面试录屏/transcript自动整理为结构化PDF",
-          "detail": "输出包括面试官问题与回答对照、扣分点Top5、可复用亮点Top5、高风险技术点速记、通过概率评估和逐题评分。项目地址：github.com/K1XE/InterviewForge。",
-          "quality": "medium",
-          "sources": [
-            {
-              "note_id": "6a0739ef00000000060339d6",
-              "url": "https://www.xiaohongshu.com/explore/6a0739ef00000000060339d6?xsec_token=ABW9nQxw3VKcE8JUQsnbe6v6GRvyAVzotnwk94ko6Tlg8=&xsec_source=pc_user",
-              "title": "妈妈再也不用担心被拷打后没心情复盘了！"
-            }
-          ]
-        },
-        {
-          "point": "用Cursor验证论文复现结果一致性：让AI生成可追溯到论文原文的文档并逐步可视化验证",
-          "detail": "将存疑的模块描述复制到Cursor chat，用plan模式交互，让AI给出与代码对应的、可追溯到论文原文的解释文档，并逐步给出每个步骤的可视化结果进行分析验证。",
-          "quality": "medium",
-          "sources": [
-            {
-              "note_id": "69c9103c000000001e00e67d",
-              "url": "https://www.xiaohongshu.com/explore/69c9103c000000001e00e67d?xsec_token=ABSvtUOOZu5HIoeGXDNrkcemwTBIrY0_IdAEL3it_p7JY=&xsec_source=pc_user",
-              "title": "挑战10min复现一篇论文！（续）"
-            }
-          ]
-        }
-      ]
-    },
-    {
       "topic": "推理优化与部署",
       "points": [
         {
-          "point": "Gemini Canvas生成的网页可通过Youware免费托管部署上线",
-          "detail": "Gemini Canvas生成的网页地址需要同意协议且对网络要求高容易挂，而部署到Youware平台后可稳定访问，Youware支持免费托管静态网页。",
-          "quality": "medium",
-          "sources": [
-            {
-              "note_id": "6972c976000000000c0365aa",
-              "url": "https://www.xiaohongshu.com/explore/6972c976000000000c0365aa?xsec_token=ABt7ZE4Tu3IUz7gPWELe5D-uPuc7wa_wGSLhaRyQquyEM=&xsec_source=pc_user",
-              "title": "Gemini3生成的网页，免费部署上线"
-            }
-          ]
-        },
-        {
-          "point": "存在网站可自动检测电脑配置并评估能本地运行哪些大模型及推理速度",
-          "detail": "以RTX 2060(6GB显存)为例：8B-9B模型尚可运行(Llama 3.1 8B约57 tok/s)，14B及以上模型显存占用超100%完全无法运行。工具通过显存占用百分比、上下文长度和tok/s综合评估可行性。网站名为canirunai。",
+          "point": "存在网站（canirunai）可自动检测电脑配置并评估能本地运行哪些大模型及推理速度",
+          "detail": "以RTX 2060(6GB显存)为例：8B-9B模型尚可运行(Llama 3.1 8B约57 tok/s，Qwen 3.5 9B约51 tok/s)，14B及以上模型显存占用超100%完全无法运行。工具通过显存占用百分比、上下文长度和tok/s综合评估可行性。",
           "quality": "medium",
           "sources": [
             {
@@ -455,6 +265,71 @@
               "title": "检测电脑能跑哪些AI大模型的网站"
             }
           ]
+        },
+        {
+          "point": "Gemini Canvas生成的网页可通过Youware免费托管部署上线",
+          "detail": "Gemini Canvas生成的网页地址需要同意协议且对网络要求高容易挂，而部署到Youware平台后可稳定访问，Youware支持免费托管静态网页。",
+          "quality": "medium",
+          "sources": [
+            {
+              "note_id": "6972c976000000000c0365aa",
+              "url": "https://www.xiaohongshu.com/explore/6972c976000000000c0365aa?xsec_token=ABt7ZE4Tu3IUz7gPWELe5D-uPuc7wa_wGSLhaRyQquyEM=&xsec_source=pc_user",
+              "title": "Gemini3生成的网页，免费部署上线"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "工具与框架",
+      "points": [
+        {
+          "point": "通过Codex自带的skill creator可一键从GitHub部署第三方skill，支持对话式指令动态安装扩展",
+          "detail": "使用$skill-creator命令加GitHub仓库名即可安装，安装后重启Codex即可加载新技能。示例中生成了多模态RAG系统架构图。通过$前缀调用skills，@引用文件，/执行命令，配置信息自动写入本地env文件。",
+          "quality": "medium",
+          "sources": [
+            {
+              "note_id": "69dda63a0000000022024520",
+              "url": "https://www.xiaohongshu.com/explore/69dda63a0000000022024520?xsec_token=ABBArpNrbzftITf6iNmgieC1_7wWjfdmpuYmrgoITlW6s=&xsec_source=pc_user",
+              "title": "北理大二｜在codex装了生成svg格式的skill"
+            }
+          ]
+        },
+        {
+          "point": "bagu_killer是面经采集与归并系统，通过题目级语义归并和高频统计输出高频拷打题库",
+          "detail": "系统通过关键词+时间窗+watermark做断点续传抓取，经帖子级去重、广告过滤、图片OCR、题目抽取、语义归并全链路处理。与普通面经合集的核心区别在于回答不同公司、不同岗位在反复拷打什么。已有AI Agent方向版本《烤面》，支持一键daily sync。",
+          "quality": "medium",
+          "sources": [
+            {
+              "note_id": "69ede77f0000000038022a5d",
+              "url": "https://www.xiaohongshu.com/explore/69ede77f0000000038022a5d?xsec_token=ABOHgtp5X742J9FuTXeyBydgdS-Yt2xKwsDKCg9iIor24=&xsec_source=pc_user",
+              "title": "清华学子遭八股痛击 卧薪尝胆开发采集神器"
+            }
+          ]
+        },
+        {
+          "point": "InterviewForge是开源面试复盘工具，可将面试录屏/transcript自动整理为结构化PDF",
+          "detail": "输出内容包括：面试官问题与回答对照、扣分点Top5、可复用亮点Top5、高风险技术点速记、后续巩固资料链接、下一场优先级建议。每道题给出passable/risky等评级和分数，附带建议答案和参考来源。项目地址：github.com/K1XE/InterviewForge。",
+          "quality": "medium",
+          "sources": [
+            {
+              "note_id": "6a0739ef00000000060339d6",
+              "url": "https://www.xiaohongshu.com/explore/6a0739ef00000000060339d6?xsec_token=ABW9nQxw3VKcE8JUQsnbe6v6GRvyAVzotnwk94ko6Tlg8=&xsec_source=pc_user",
+              "title": "妈妈再也不用担心被拷打后没心情复盘了！"
+            }
+          ]
+        },
+        {
+          "point": "用Cursor验证论文复现结果一致性：让AI生成可追溯到论文原文的文档并逐步可视化验证",
+          "detail": "将存疑的模块描述复制到Cursor chat，用plan模式交互，让AI给出与代码对应的、可追溯到论文原文的解释文档，并逐步给出每个步骤的可视化结果进行分析验证。同时需警惕AI提效导致深度思考能力退化。",
+          "quality": "medium",
+          "sources": [
+            {
+              "note_id": "69c9103c000000001e00e67d",
+              "url": "https://www.xiaohongshu.com/explore/69c9103c000000001e00e67d?xsec_token=ABSvtUOOZu5HIoeGXDNrkcemwTBIrY0_IdAEL3it_p7JY=&xsec_source=pc_user",
+              "title": "挑战10min复现一篇论文！（续）"
+            }
+          ]
         }
       ]
     },
@@ -462,79 +337,177 @@
       "topic": "低质量/可跳过",
       "points": [
         {
-          "note_id": "692aac7a000000001e02af7e",
-          "title": "Gemini在投资领域的使用，投资人要失业？",
-          "quality": "low"
+          "point": "Gemini在投资领域的使用",
+          "detail": "无具体知识点提炼。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "692aac7a000000001e02af7e",
+              "url": "https://www.xiaohongshu.com/explore/692aac7a000000001e02af7e?xsec_token=ABlMWVpnhbmS1w-dcLt_f3nDCmzS5896nvrXZs6xe5Hks=&xsec_source=pc_user",
+              "title": "Gemini在投资领域的使用，投资人要失业？"
+            }
+          ]
         },
         {
-          "note_id": "696a305f0000000021033a17",
-          "title": "我用AI做的📕小红书封面创作助手上线啦🥳",
-          "quality": "low"
+          "point": "通过Vibe Coding完成小红书封面创作助手的完整前后端和数据库开发",
+          "detail": "作者使用AI辅助编程方式完成了一个小红书封面创作工具，强调先发布再迭代的产品思路。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "696a305f0000000021033a17",
+              "url": "https://www.xiaohongshu.com/explore/696a305f0000000021033a17?xsec_token=ABkF0SZG8bXEqmO2cWLK9vKmJ4yEhS5Bhecf8ooupM6WE=&xsec_source=pc_user",
+              "title": "我用AI做的📕小红书封面创作助手上线啦🥳"
+            }
+          ]
         },
         {
-          "note_id": "6974a9180000000009039408",
-          "title": "GARDO：如何拒绝RL奖励欺骗？",
-          "quality": "low"
+          "point": "GARDO：如何拒绝RL奖励欺骗",
+          "detail": "无具体知识点提炼。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "6974a9180000000009039408",
+              "url": "https://www.xiaohongshu.com/explore/6974a9180000000009039408?xsec_token=ABC8g7ufg6ClsWeus9ZRujUCuecKzgZRgIpBDW1rhTi4M=&xsec_source=pc_user",
+              "title": "GARDO：如何拒绝RL奖励欺骗？"
+            }
+          ]
         },
         {
-          "note_id": "69bd4553000000002301fc21",
-          "title": "我用vibe coding，做了一个很浪漫的产品",
-          "quality": "low"
+          "point": "Clawdbot（重复帖，无新增内容）",
+          "detail": "无具体知识点提炼。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "697ba11c0000000028008cc6",
+              "url": "https://www.xiaohongshu.com/explore/697ba11c0000000028008cc6?xsec_token=ABDhLSGr8iy7yoBcEqwX7jRUtzZTwbqz7x-hGGDK2loTA=&xsec_source=pc_user",
+              "title": "Clawdbot"
+            }
+          ]
         },
         {
-          "note_id": "69c25fa3000000001a027095",
-          "title": "AI时代的力扣健身，靠自己的脚本坚持下去了",
-          "quality": "low"
+          "point": "用Gemini进行vibe coding开发创意写作产品",
+          "detail": "产品在下雨背景上叠加打字功能，面向深度思考和写作场景。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69bd4553000000002301fc21",
+              "url": "https://www.xiaohongshu.com/explore/69bd4553000000002301fc21?xsec_token=ABTnDp02CBLe1gKWcjVW7CeiJdlyL59qnqhPU45vWAjoc=&xsec_source=pc_user",
+              "title": "我用vibe coding，做了一个很浪漫的产品"
+            }
+          ]
         },
         {
-          "note_id": "69c50145000000002302297a",
-          "title": "Agent过时了吗？Harness又是什么？",
-          "quality": "low"
+          "point": "用Python脚本实现每日LeetCode刷题推送+LLM知识点学习的终端工具",
+          "detail": "脚本每日推送2道Hot100题目，包含核心思路、标准代码、挖空练习，附带大模型知识点。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69c25fa3000000001a027095",
+              "url": "https://www.xiaohongshu.com/explore/69c25fa3000000001a027095?xsec_token=ABl3kW9UKHyNZ8zN09kL5rc_1zDagPyqiLnFmPc8lK4p8=&xsec_source=pc_user",
+              "title": "AI时代的力扣健身，靠自己的脚本坚持下去了"
+            }
+          ]
         },
         {
-          "note_id": "69c908db0000000023022c95",
-          "title": "我的Qclaw和大厂撞名，我决定……",
-          "quality": "low"
+          "point": "Agent过时了吗？Harness又是什么？",
+          "detail": "无具体知识点提炼。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69c50145000000002302297a",
+              "url": "https://www.xiaohongshu.com/explore/69c50145000000002302297a?xsec_token=AB9m0vsU22YpLLDlT4-Il3ipjv_zgRXKH8UfN21jBlWHs=&xsec_source=pc_user",
+              "title": "Agent过时了吗？Harness又是什么？"
+            }
+          ]
         },
         {
-          "note_id": "69cd0865000000001a02c723",
-          "title": "我会为了你一万次回到那个夏天",
-          "quality": "low"
+          "point": "Qclaw开源工具撞名事件",
+          "detail": "无具体知识点提炼。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69c908db0000000023022c95",
+              "url": "https://www.xiaohongshu.com/explore/69c908db0000000023022c95?xsec_token=ABSvtUOOZu5HIoeGXDNrkceoQpT7XDlJHHxAFM-5AeGmA=&xsec_source=pc_user",
+              "title": "我的Qclaw和大厂撞名，我决定……"
+            }
+          ]
         },
         {
-          "note_id": "69cf7149000000001a021206",
-          "title": "ClaudeCode学习指南 动态规划学习路径 开源",
-          "quality": "low"
+          "point": "ex-skill项目：将前任聊天记录喂给模型生成模拟前任说话风格的AI Skill",
+          "detail": "支持微信/QQ聊天记录、朋友圈截图、照片等作为输入材料，仅用于个人回忆与情感疗愈。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69cd0865000000001a02c723",
+              "url": "https://www.xiaohongshu.com/explore/69cd0865000000001a02c723?xsec_token=AB4O8ZWfi-xUwvAijKGIwAPgs8A63uQXPvjOGIradS-hY=&xsec_source=pc_user",
+              "title": "我会为了你一万次回到那个夏天"
+            }
+          ]
         },
         {
-          "note_id": "69d0e82a0000000023023540",
-          "title": "全干货！普通人用AI必备30条千问电脑版指令",
-          "quality": "low"
+          "point": "ClaudeCode学习指南 动态规划学习路径",
+          "detail": "无具体知识点提炼。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69cf7149000000001a021206",
+              "url": "https://www.xiaohongshu.com/explore/69cf7149000000001a021206?xsec_token=ABQkXJ5PV3COXT0Eb0GGrhgP8vmoA3CkI1-WKMb8iEHWA=&xsec_source=pc_user",
+              "title": "ClaudeCode学习指南 动态规划学习路径 开源"
+            }
+          ]
         },
         {
-          "note_id": "69e79aab0000000023011b0d",
-          "title": "我把十四年的歌单，蒸馏成了AI电台🎧",
-          "quality": "low"
+          "point": "整理了30条千问电脑版的提示词模板",
+          "detail": "覆盖市场调研、副业计划、自媒体分析等七个场景，本质是预写好的prompt模板合集，无独特技术方法论。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69d0e82a0000000023023540",
+              "url": "https://www.xiaohongshu.com/explore/69d0e82a0000000023023540?xsec_token=ABofd2hNRirlMamVxFlATaZ7vmYAv6LcDX-ZKNp2Koqew=&xsec_source=pc_user",
+              "title": "全干货！普通人用AI必备30条千问电脑版指令"
+            }
+          ]
         },
         {
-          "note_id": "69f47b10000000003701eeb0",
-          "title": "建议产品和运营都去试试gstack项目！",
-          "quality": "low"
+          "point": "把十四年的歌单蒸馏成AI电台",
+          "detail": "无具体知识点提炼。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69e79aab0000000023011b0d",
+              "url": "https://www.xiaohongshu.com/explore/69e79aab0000000023011b0d?xsec_token=ABVYysBb5VAmCcuYxomOLU1Uouie32kmcWMuJTNTD2yBs=&xsec_source=pc_user",
+              "title": "我把十四年的歌单，蒸馏成了AI电台🎧"
+            }
+          ]
         },
         {
-          "note_id": "69f651bd000000003600115f",
-          "title": "codex可以养宠物了",
-          "quality": "low"
+          "point": "建议产品和运营都去试试gstack项目",
+          "detail": "无具体知识点提炼。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69f47b10000000003701eeb0",
+              "url": "https://www.xiaohongshu.com/explore/69f47b10000000003701eeb0?xsec_token=ABWOo6BuG3Oy-pG_ljn3ZuiRIOjV7zCiYtL-MLfNZm2UE=&xsec_source=pc_user",
+              "title": "建议产品和运营都去试试gstack项目！"
+            }
+          ]
         },
         {
-          "note_id": "69f9fb8800000000380204ae",
-          "title": "Codex新出个宠物模式，ikun依然顶流",
-          "quality": "low"
-        },
-        {
-          "note_id": "697ba11c0000000028008cc6",
-          "title": "Clawdbot",
-          "quality": "low"
+          "point": "Codex CLI支持像素宠物伴侣功能（Petdex）",
+          "detail": "Petdex是开源像素宠物库，提供99+宠物，通过 npx petdex install [name] 一行命令安装。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69f651bd000000003600115f",
+              "url": "https://www.xiaohongshu.com/explore/69f651bd000000003600115f?xsec_token=ABIT0kWFIh2Rt22G5Lfwjda9ge6AqODoH6qPDfSknRnws=&xsec_source=pc_user",
+              "title": "codex可以养宠物了"
+            },
+            {
+              "note_id": "69f9fb8800000000380204ae",
+              "url": "https://www.xiaohongshu.com/explore/69f9fb8800000000380204ae?xsec_token=ABO053KGkXr4J25GzXCR3RJ9f66BwCBTBZLK4UwmgJKww=&xsec_source=pc_user",
+              "title": "Codex新出个宠物模式，ikun依然顶流"
+            }
+          ]
         }
       ]
     }
