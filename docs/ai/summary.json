@@ -1,372 +1,1235 @@
 {
   "topics": [
     {
-      "topic": "Agentic RL（智能体强化学习）",
+      "topic": "强化学习与奖励模型",
       "points": [
         {
-          "point": "Agentic RL 与 Reasoning RL 的本质差异：从单轮封闭计算变成多轮分布式系统问题",
-          "detail": "Reasoning RL（数学/代码）是封闭循环：出题→答题→对答案→算梯度，奖励就是“对不对”。而 agent RL 需调 API、读库、与模拟用户多轮交互，一个 episode 可能十几轮，每轮等外部环境返回，本质是分布式系统问题：要同时管理 GPU 推理、外部环境异步调用、组件间数据流。",
+          "point": "GRPO核心创新：用群体内相对比较替代传统Critic模型计算优势，无需训练Critic网络",
+          "detail": "对同一Prompt生成G个回答组成群体，用奖励模型打分后通过Z-score标准化计算相对优势：Ai=(Ri-μ)/σ。Ai>0表示优于平均应增加概率，Ai<0则应降低概率。策略损失采用PPO的Clip机制，同一序列所有token共享同一优势值。KL散度惩罚防止模型偏离参考策略。相比传统RLHF/DPO需要大量标注数据配合SFT，GRPO让模型可直接在环境中试错学习，大幅节省显存与算力。",
           "quality": "high",
           "sources": [
-            { "note_id": "69a91ed1000000001b01726e", "url": "https://www.xiaohongshu.com/explore/69a91ed1000000001b01726e?xsec_token=ABs5KkqDt5HjpEjLlaG3OkJQgVRL-sniQ64eDczx_kiFA=&xsec_source=pc_user", "title": "怎么让Agent 的 RL训练真正跑起来" },
-            { "note_id": "69f22c620000000022025283", "url": "https://www.xiaohongshu.com/explore/69f22c620000000022025283?xsec_token=ABrHBu_UR-t3UsOyN9OL-yi9lHeMaEnp3i51CfMNZHkSs=&xsec_source=pc_user", "title": "agentic rl算法侧" }
+            {
+              "note_id": "69d136d8000000002301c9a6",
+              "url": "https://www.xiaohongshu.com/explore/69d136d8000000002301c9a6?xsec_token=ABRBzgAWiiEPNPObINq1CdINBWkyWGwhJle_XbSujtUc8=&xsec_source=pc_user",
+              "title": "grpo loss理解"
+            },
+            {
+              "note_id": "69d8956f000000001b0018c2",
+              "url": "https://www.xiaohongshu.com/explore/69d8956f000000001b0018c2?xsec_token=AB7GOLRO28Qft_oM4wpWDnESJpmGPggGw3b31T2dhvTzE=&xsec_source=pc_user",
+              "title": "Agentic RL实践经验总结"
+            },
+            {
+              "note_id": "69d5bf190000000023015aed",
+              "url": "https://www.xiaohongshu.com/explore/69d5bf190000000023015aed?xsec_token=AB0J-CCaTbOgc6DE1OQOoYy0uLjtEUWYuBxg9FsaUnPr0=&xsec_source=pc_user",
+              "title": "Agent RL训练核心要点"
+            }
           ]
         },
         {
-          "point": "蚂蚁开源 AReaL 的关键设计：把训练系统伪装成 OpenAI 兼容 API，抹掉“训练”和“运行”的边界",
-          "detail": "Agent 代码照常调 chat completion API，调试时接真 API，训练时只把 base_url 换成 AReaL 地址，代码一行不改。这让 agent 开发者不需懂 RL、RL 研究者不需懂 agent 框架，两边解耦。另配合全异步训练（生成与训练拆到不同 GPU 集群、replay buffer 解耦），实测 2.77 倍加速且性能不降。",
+          "point": "SFT和RL的本质分工：SFT教能力和格式，RL优化多条合法轨迹中的策略选择",
+          "detail": "SFT擅长学习工具调用格式、意图路由和标准流程等有明确supervision的能力；RL解决的是当存在多条合法trace时，如何更稳定地选到任务得分更高的那条。RL值得强化的五类能力：选择优化、多步决策稳定性、benchmark直接作为训练信号、小模型边界行为、reward对齐。RL不擅长解决domain knowledge缺口、工具schema不清或gold label不准、长链抽象推理能力。判断框架：根因是'没见过'→扩充训练集；根因是'见过但执行不稳定'→RL更有效。",
           "quality": "high",
           "sources": [
-            { "note_id": "69a91ed1000000001b01726e", "url": "https://www.xiaohongshu.com/explore/69a91ed1000000001b01726e?xsec_token=ABs5KkqDt5HjpEjLlaG3OkJQgVRL-sniQ64eDczx_kiFA=&xsec_source=pc_user", "title": "怎么让Agent 的 RL训练真正跑起来" }
+            {
+              "note_id": "69d21f24000000001d018adb",
+              "url": "https://www.xiaohongshu.com/explore/69d21f24000000001d018adb?xsec_token=AB8zUYcAmjuDlNrFhBrfWXtAkrnTvzEll7V1RgYFy0ZE0=&xsec_source=pc_user",
+              "title": "真实业务场景中 SFT 之后到底为什么做 RL?"
+            }
           ]
         },
         {
-          "point": "异步 RL 的算法硬伤：旧权重生成的“脏数据”破坏 PPO 的同策略假设，需用 staleness 上界 + decoupled PPO 约束",
-          "detail": "生成端用旧权重，训练端拿到的数据可能来自好几个版本前的 policy；甚至一条 trajectory 前半段是 v3、后半段是 v5 生成的。标准 PPO 假设所有 action 来自同一 policy，该假设被打破。解法是引入 staleness 上界和 decoupled PPO objective 用数学约束住。",
+          "point": "GRPO训练实践经验：先小规模跑通再扩量，奖励模型质量决定效果大半",
+          "detail": "前期参数探索阶段建议batch开小、采样次数少，优先追求迭代速度。每75步保存checkpoint，同时记录奖励值、KL变化和生成质量。通用RM用于专业领域会导致模型跑偏，需用目标领域数据精调RM。不要只盯奖励值，reward变高不等于真实效果变好（可能是reward hacking），建议固定验证题定期抽样看真实生成结果。KL涨太快说明模型偏离原始分布过远，需降低训练强度。",
           "quality": "high",
           "sources": [
-            { "note_id": "69a91ed1000000001b01726e", "url": "https://www.xiaohongshu.com/explore/69a91ed1000000001b01726e?xsec_token=ABs5KkqDt5HjpEjLlaG3OkJQgVRL-sniQ64eDczx_kiFA=&xsec_source=pc_user", "title": "怎么让Agent 的 RL训练真正跑起来" }
+            {
+              "note_id": "69ce68eb000000002301d24b",
+              "url": "https://www.xiaohongshu.com/explore/69ce68eb000000002301d24b?xsec_token=ABE29i7SbVgg9Bx3loNQZcHB1oBQCmSu_9Kxnqxyy6bDg=&xsec_source=pc_user",
+              "title": "GRPO训练经验分享总结"
+            }
           ]
         },
         {
-          "point": "Agentic RL 信用分配（Credit Assignment）的核心：把 episode 的最终成败拆解到每一步中间决策上",
-          "detail": "多轮轨迹（读任务→搜索→读证据→调工具→总结）通常只在最后给 R_final=0/1。难点是把 trajectory-level 标量回拆成每步的 step-level advantage（A_t），再乘到对应 decision tokens 的 log-prob 上更新；observation（工具/网页返回）通常被 mask。若只做 trajectory-level RL，失败轨迹里的好搜索会被一起惩罚，成功轨迹里的废操作会被一起奖励。",
+          "point": "RM-R1将奖励建模变成推理问题，先生成评分标准和逐条对比的推理链，再给出判断",
+          "detail": "训练分两阶段：蒸馏SFT（用O3/Claude生成推理链，zero-shot准确率仅约75%需二次纠正）+ RLVR强化学习（偏好数据集标注作为可验证奖励信号做RL突破SFT上限）。纠正链的训练价值在于不仅示范正确做法还指出原推理链错在哪里。蒸馏本质是经济账：一次性训练成本换长期低成本推理，最终部署Qwen2.5-7B学生模型。",
           "quality": "high",
           "sources": [
-            { "note_id": "6a2190580000000038036bd3", "url": "https://www.xiaohongshu.com/explore/6a2190580000000038036bd3?xsec_token=ABMfHCJ8U3mkpoE0mtdhlSaeEzqxVWxJElq15yJ_FTvqY=&xsec_source=pc_user", "title": "帮学妹找基座实习day11（Agentic RL信用分配）" },
-            { "note_id": "69f22c620000000022025283", "url": "https://www.xiaohongshu.com/explore/69f22c620000000022025283?xsec_token=ABrHBu_UR-t3UsOyN9OL-yi9lHeMaEnp3i51CfMNZHkSs=&xsec_source=pc_user", "title": "agentic rl算法侧" }
+            {
+              "note_id": "69cc4125000000002300418d",
+              "url": "https://www.xiaohongshu.com/explore/69cc4125000000002300418d?xsec_token=AB2McnRwWxvnYnpuKbehWx1p7IIEvZfSxTNykDwU7KCQg=&xsec_source=pc_user",
+              "title": "用推理链重新定义奖励模型——RM-R1 分享"
+            }
           ]
         },
         {
-          "point": "GiGPO 用“跨 episode 的相同 anchor state”聚合动作，低成本实现 step 级信用分配",
-          "detail": "Vanilla GRPO 只给整个 episode 一个 reward，学不到每步信号；直接对每个 step 多次 rollout 计算开销过高。GiGPO 发现不同 episode 中模型常面临相同状态（anchor state），把这些跨 episode 的重复状态作为一个 rollout batch 提供相对优势信号，episode level 优势用 Dr.GRPO 的估计方法。",
+          "point": "DPO存在四大设计缺陷：正优化失效、长度偏置、Reward Hacking、训练不稳定",
+          "detail": "DPO的loss只鼓励Chosen和Reject的Margin，并不实际增大Chosen输出概率；较长样本天然具有更高rewards导致输出变长。β参数存在天然悖论：大β保守但梯度大训练不稳定，小β激进但可能严重偏离ref。DPO对数据难度敏感，只有中间难度样本梯度稳定。但DPO比PPO少load模型、比GRPO rollout次数少，天然适配AB实验，是快速开展业务RL的起步算法。最优策略闭式解：π*(y|x) = π_ref(y|x)·exp(r(y|x)/β) / Z(x)。",
           "quality": "high",
           "sources": [
-            { "note_id": "69f22c620000000022025283", "url": "https://www.xiaohongshu.com/explore/69f22c620000000022025283?xsec_token=ABrHBu_UR-t3UsOyN9OL-yi9lHeMaEnp3i51CfMNZHkSs=&xsec_source=pc_user", "title": "agentic rl算法侧" }
+            {
+              "note_id": "69d41ff8000000001d01a851",
+              "url": "https://www.xiaohongshu.com/explore/69d41ff8000000001d01a851?xsec_token=ABgsi99iZrhVhphVreEJdDVCmlMlj93VO0FyUlA9_dnZc=&xsec_source=pc_user",
+              "title": "VLM RL算法思考（三）"
+            }
           ]
         },
         {
-          "point": "IGPO：用“每轮交互是否让模型更易生成正确答案”作为稠密奖励信号",
-          "detail": "若某轮交互让模型更容易生成正确答案就该奖励，偏离则惩罚。优点是便宜、稠密、ground-truth-aware，不需额外 PRM 或蒙特卡洛估值；缺点是依赖高质量 ground truth，问题有多个合理答案而数据集只认一个时，可能惩罚事实正确但不匹配标注的路径。",
+          "point": "RL训推不一致：训练引擎(FSDP)和推理引擎(vLLM)因计算精度差异导致off-policy问题",
+          "detail": "Mismatch用log π_fsdp(a|s) - log π_vllm(a|s)衡量，对vLLM产生的低概率token mismatch显著更大。工具调用场景放大此问题：OOD的工具响应导致模型更不确定。H系显卡(H20)比A100更稳定。解决方案：序列级重要性采样(Sequence-Level IS)优于Token级IS，MIS比TIS效果更好。",
           "quality": "high",
           "sources": [
-            { "note_id": "6a2190580000000038036bd3", "url": "https://www.xiaohongshu.com/explore/6a2190580000000038036bd3?xsec_token=ABMfHCJ8U3mkpoE0mtdhlSaeEzqxVWxJElq15yJ_FTvqY=&xsec_source=pc_user", "title": "帮学妹找基座实习day11（Agentic RL信用分配）" }
+            {
+              "note_id": "69d0c0ca000000001d01d780",
+              "url": "https://www.xiaohongshu.com/explore/69d0c0ca000000001d01d780?xsec_token=ABofd2hNRirlMamVxFlATaZ4mpG3bDihGADVQ-H8iRqIk=&xsec_source=pc_user",
+              "title": "关于rl训推不一致的问题"
+            }
           ]
         },
         {
-          "point": "Agent 多轮自进化为何会坍塌：原则级经验 + 步进式注入 + 离策略蒸馏是最优组合",
-          "detail": "系统研究经验内化三维度，发现 on-policy context-distillation 会导致多轮坍塌；步进式注入可把“过早回答”从 63.82% 降到 0%（+8.0pp），off-policy 蒸馏提供连贯行为示范，实现跨迭代稳定自进化（3 轮持续提升）。论文 arxiv 2606.04703。",
+          "point": "PRM（过程奖励模型）与ORM（结果奖励模型）是两个互补方向",
+          "detail": "Qwen团队研究发现蒙特卡洛采样构造PRM训练数据效果差，因为它混淆了'当前步骤对不对'和'未来能否得到正确答案'，LLM-as-a-judge的数据质量显著更高。",
           "quality": "high",
           "sources": [
-            { "note_id": "6a240254000000002103e42f", "url": "https://www.xiaohongshu.com/explore/6a240254000000002103e42f?xsec_token=ABSTdXdMDw9w5SBW97wCPZPXNm37R-taU6TXSqdjntjnw=&xsec_source=pc_user", "title": "经验内化：Agent 多轮自进化为什么会坍塌？" }
+            {
+              "note_id": "69cc4125000000002300418d",
+              "url": "https://www.xiaohongshu.com/explore/69cc4125000000002300418d?xsec_token=AB2McnRwWxvnYnpuKbehWx1p7IIEvZfSxTNykDwU7KCQg=&xsec_source=pc_user",
+              "title": "用推理链重新定义奖励模型——RM-R1 分享"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "Agent设计",
+      "points": [
+        {
+          "point": "Agent RL训练核心要点：方法选型、Prompt设计、Reward设计、环境方案",
+          "detail": "方法选型优先GRPO（无Critic、工程简单），PPO上限高但工程复杂。Prompt数据集需设计难度梯度并随训练阶段调整比例（前期70%简单，后期30%简单）。Reward以0/1任务完成判定为基础，辅助reward权重需远小于主reward。环境方案最优用Docker沙箱每次重置初始状态。7B模型参考：prompt集5000-50000条，每prompt采8-32个rollout。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69d5bf190000000023015aed",
+              "url": "https://www.xiaohongshu.com/explore/69d5bf190000000023015aed?xsec_token=AB0J-CCaTbOgc6DE1OQOoYy0uLjtEUWYuBxg9FsaUnPr0=&xsec_source=pc_user",
+              "title": "Agent RL训练核心要点"
+            },
+            {
+              "note_id": "69d8956f000000001b0018c2",
+              "url": "https://www.xiaohongshu.com/explore/69d8956f000000001b0018c2?xsec_token=AB7GOLRO28Qft_oM4wpWDnESJpmGPggGw3b31T2dhvTzE=&xsec_source=pc_user",
+              "title": "Agentic RL实践经验总结"
+            }
           ]
         },
         {
-          "point": "AEnvironment：把训练/测评/部署所需的环境统一抽象成 MCP 协议接口",
-          "detail": "训练、测评、部署 agent 都需要环境，每次从零搭门槛太高。AEnvironment 把一切抽象成 MCP 的 Environment 接口——bash 终端、benchmark、甚至另一个 agent 都可以是环境，用同一套接口注册工具、定义奖励、跑评测，从训练到上线不换接口。",
+          "point": "GLM-5训练流程：Pre-Training→Mid-Training→SFT→Reasoning RL→Agentic RL→General RL+跨阶段蒸馏",
+          "detail": "预训练使用18T通用+9T代码推理语料（4K上下文），Mid-Training扩展到200K上下文。Mid-Training专门解决长上下文、Agent场景适配、复杂软件工程理解。General RL采用混合奖励系统（rule-based+ORM+GRM）。Agentic数据合成包括任务合成、环境合成、反馈合成与轨迹合成。引入human-in-the-loop style alignment防止AI味过重。On-Policy Cross-Stage Distillation缓解多阶段训练的能力遗忘。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69d4868d000000001a029c50",
+              "url": "https://www.xiaohongshu.com/explore/69d4868d000000001a029c50?xsec_token=ABgsi99iZrhVhphVreEJdDVPJVfpwWuhmaNr8BGG0Keh4=&xsec_source=pc_user",
+              "title": "Agentic能力从哪里来？"
+            }
+          ]
+        },
+        {
+          "point": "判断Agent项目是否为Toy的7条自检标准及投简历前必做3条",
+          "detail": "自检标准包括：Agent是否能自主决定是否检索、是否有真记忆、是否有量化评估体系、是否多Agent分工、是否支持多模态输入、链路是否动态可变、工具调用失败后是否能自恢复。必做3条：自主检索决策、检索策略可解释、MCP工具安全治理（最小权限、高危操作禁止、调用审计）。面试官最想听设计权衡而非框架/API罗列。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69d1e4bd000000002202890e",
+              "url": "https://www.xiaohongshu.com/explore/69d1e4bd000000002202890e?xsec_token=ABRBzgAWiiEPNPObINq1CdIDkuzmgc_4jJygcBMYvxZkI=&xsec_source=pc_user",
+              "title": "可以投简历，但你先别急"
+            }
+          ]
+        },
+        {
+          "point": "Echo Trap是多轮RL训练的核心稳定性问题，表现为Agent过拟合局部奖励导致奖励方差崩溃",
+          "detail": "解决方案包括：使用带轨迹过滤的算法（如StarPO-S）和设计多维度奖励（结果奖励+格式奖励+工具执行奖励）。多轮工具调用建模需根据任务步数选择MDP或POMDP（≤10步用MDP，>10步必须POMDP并引入记忆模块）。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69d8956f000000001b0018c2",
+              "url": "https://www.xiaohongshu.com/explore/69d8956f000000001b0018c2?xsec_token=AB7GOLRO28Qft_oM4wpWDnESJpmGPggGw3b31T2dhvTzE=&xsec_source=pc_user",
+              "title": "Agentic RL实践经验总结"
+            }
+          ]
+        },
+        {
+          "point": "Claude Code采用Less Scaffolding设计，核心是单一ReAct循环而非复杂状态机",
+          "detail": "信任模型自身推理能力，不引入复杂编排。主Agent可派生子Agent完成子任务，递归深度限制为1。仅提供约15个基础工具原语（Bash、Read、Write、Edit、Grep），通过组合完成复杂任务。安全采用纵深防御模型，Deny决定不可逆，使用tree-sitter对Bash命令做语法树解析。长期记忆通过MEMORY.md索引文件管理。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69d8ca2600000000230061e1",
+              "url": "https://www.xiaohongshu.com/explore/69d8ca2600000000230061e1?xsec_token=AB7GOLRO28Qft_oM4wpWDnERJtJbkBhgsXJZxp0q6yX3M=&xsec_source=pc_user",
+              "title": "算法小小怪笔记15:cc架构学习"
+            }
+          ]
+        },
+        {
+          "point": "Harness是解决LLM长链路任务中遗忘和错误问题的一整套机制",
+          "detail": "包含任务拆解、state保存、完成度判断、错误回退和动态更新五个核心环节。背景是In-context方法在长链路任务中失效（遗忘早期action、出错无反馈、context窗口满）。Harness包含memory管理策略，是更上层的概念。Meta-Harness流程：经验文件系统提取经验→提出Harness代码→结合LLM处理任务→评估→日志存回文件系统形成闭环。AI编程从Copilot到Agent的范式转变催生Harness Engineering概念。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69d0cc72000000001b021d4f",
+              "url": "https://www.xiaohongshu.com/explore/69d0cc72000000001b021d4f?xsec_token=ABofd2hNRirlMamVxFlATaZzSIrSaYfj47JxepURL8QjE=&xsec_source=pc_user",
+              "title": "什么是大模型Harness？和大模型Memory什么"
+            },
+            {
+              "note_id": "69d8ca2600000000230061e1",
+              "url": "https://www.xiaohongshu.com/explore/69d8ca2600000000230061e1?xsec_token=AB7GOLRO28Qft_oM4wpWDnERJtJbkBhgsXJZxp0q6yX3M=&xsec_source=pc_user",
+              "title": "算法小小怪笔记15:cc架构学习"
+            }
+          ]
+        },
+        {
+          "point": "2025年记忆管理突破：RL智能体可自主学习存储与检索信息，阿里Agent-as-Environment思路更具前景",
+          "detail": "打破传统固定记忆存储模式，将记忆转化为可学习的子系统，结合分层记忆结构提升长期任务处理效率。现有环境已难以满足Agentic RL需求，用Agent模拟环境的方式被认为是更有前景的方向。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69d8956f000000001b0018c2",
+              "url": "https://www.xiaohongshu.com/explore/69d8956f000000001b0018c2?xsec_token=AB7GOLRO28Qft_oM4wpWDnESJpmGPggGw3b31T2dhvTzE=&xsec_source=pc_user",
+              "title": "Agentic RL实践经验总结"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "RAG检索增强",
+      "points": [
+        {
+          "point": "普通RAG、动态路由RAG、Agentic RAG三者的核心区别在于是否有意图判断和多步推理能力",
+          "detail": "普通RAG每次输入都查知识库；动态路由RAG先做意图判断（用LLM零样本分类），闲聊直接回答，专业问题才触发RAG；Agentic RAG具备自主规划能力，可决定是否检索、检索几次，支持多步推理。动态路由通过精准Prompt让LLM只输出RETRIEVE或ANSWER两种结果实现。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69ca75500000000021012573",
+              "url": "https://www.xiaohongshu.com/explore/69ca75500000000021012573?xsec_token=ABQfDabu8DDBJmliTeedynlYGHQTiRY4wV7fcbusLNPSo=&xsec_source=pc_user",
+              "title": "agent项目Agentic RAG和RAG有啥区别"
+            }
+          ]
+        },
+        {
+          "point": "Agentic RAG的具体流程：query重写→判断是否需要检索→生成回答→LLM agent评判回答质量→不合理则循环",
+          "detail": "LLM agent先重写query，另一个agent判断是否需要查向量库，生成回答后由评判agent判断是否合理/有幻觉，不合理则回到第一步重新循环。多步推理通过Prompt+强制JSON输出实现，action为retrieve则查知识库，为answer则直接回答，Java后端解析JSON明确执行路径。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69ca75500000000021012573",
+              "url": "https://www.xiaohongshu.com/explore/69ca75500000000021012573?xsec_token=ABQfDabu8DDBJmliTeedynlYGHQTiRY4wV7fcbusLNPSo=&xsec_source=pc_user",
+              "title": "agent项目Agentic RAG和RAG有啥区别"
+            }
+          ]
+        },
+        {
+          "point": "蚂蚁AI应用开发面试覆盖RAG全链路：MinerU解析、Ragas评测、Query Rewrite、向量vs关键词检索、文档更新索引同步",
+          "detail": "面试60min+，涉及MinerU解析Markdown层级结构对检索的好处、Ragas评测中Faithfulness低分含义、HNSW索引原理、为什么RAG比直接问大模型更能减少事实性错误等。",
           "quality": "medium",
           "sources": [
-            { "note_id": "69a91ed1000000001b01726e", "url": "https://www.xiaohongshu.com/explore/69a91ed1000000001b01726e?xsec_token=ABs5KkqDt5HjpEjLlaG3OkJQgVRL-sniQ64eDczx_kiFA=&xsec_source=pc_user", "title": "怎么让Agent 的 RL训练真正跑起来" }
-          ]
-        }
-      ]
-    },
-    {
-      "topic": "RL 训练实战技巧与稳定性",
-      "points": [
-        {
-          "point": "KL loss 用 k3 而非 k1：k1 会持续惩罚本就小的 log_p 导致难任务上模型坍塌",
-          "detail": "用 slime 训 computer use agent 总训一半崩，元凶是默认用了 k1 KL loss。k1 的缺陷是持续惩罚本来就小的 log p，难 task 上 log p 本就要被 reward 惩罚、再被 k1 惩罚模型立即坍塌；k3 保证 KL loss 严格为正，完美解决。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "69adb8c8000000001a01c6fd", "url": "https://www.xiaohongshu.com/explore/69adb8c8000000001a01c6fd?xsec_token=ABI_Z_LYdXCXGP0IKIF3xenDB7-Ug9SZPuI6tjC_A1MI8=&xsec_source=pc_user", "title": "做了一年RL的小经验" }
+            {
+              "note_id": "69ccfd2b000000001a037b8a",
+              "url": "https://www.xiaohongshu.com/explore/69ccfd2b000000001a037b8a?xsec_token=AB2McnRwWxvnYnpuKbehWx1tx3_SAsqSaNsaso4yL0nlY=&xsec_source=pc_user",
+              "title": "蚂蚁 AI应用开发 一面面经"
+            }
           ]
         },
         {
-          "point": "value model 并非多余：它赋予 token level advantage，能很好稳定训练，业界主流仍用 PPO",
-          "detail": "很多人受各种 g*po 影响认为 value model 多余，但实践中 value model 提供 token level advantage 对稳定训练很重要，业界大多还是用 PPO。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "69adb8c8000000001a01c6fd", "url": "https://www.xiaohongshu.com/explore/69adb8c8000000001a01c6fd?xsec_token=ABI_Z_LYdXCXGP0IKIF3xenDB7-Ug9SZPuI6tjC_A1MI8=&xsec_source=pc_user", "title": "做了一年RL的小经验" }
-          ]
-        },
-        {
-          "point": "RL 常见超参经验：大 batch RL loss 默认 1e-6，调成 SFT/RLHF 的 1e-5 通常会崩",
-          "detail": "updates per step 一般设 1 保证尽量 on-policy；rollout per step（task×sample）越多越稳定；学习率默认 1e-6，新手为加速调到 1e-5 左右通常很寄。还需关注 task 难度、clip ratio、kl coefficient、temperature 是否合理。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "69adb8c8000000001a01c6fd", "url": "https://www.xiaohongshu.com/explore/69adb8c8000000001a01c6fd?xsec_token=ABI_Z_LYdXCXGP0IKIF3xenDB7-Ug9SZPuI6tjC_A1MI8=&xsec_source=pc_user", "title": "做了一年RL的小经验" }
-          ]
-        },
-        {
-          "point": "agentic RL 要做好 advantage standardization，并清洗被低质量 env feedback 污染的样本",
-          "detail": "每个 step 的 advantage 估计若不做好 standardization 会直接影响效果；真实复杂 env 的不稳定性会污染样本，收集训练数据前要去掉未完成或被低质量 env feedback 污染的样本。为防长尾问题普遍用异步，这种 off-policy 从实验看影响不大。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "69adb8c8000000001a01c6fd", "url": "https://www.xiaohongshu.com/explore/69adb8c8000000001a01c6fd?xsec_token=ABI_Z_LYdXCXGP0IKIF3xenDB7-Ug9SZPuI6tjC_A1MI8=&xsec_source=pc_user", "title": "做了一年RL的小经验" }
-          ]
-        },
-        {
-          "point": "KL 放 Reward 还是 Loss：决定的不是记号，而是 advantage 语义和梯度通路",
-          "detail": "PPO-RLHF 通常 KL in reward（KL 当作样本成本，先改 reward 再改 return/GAE/advantage）；GRPO 通常 KL in loss（group advantage 表达 raw reward 相对好坏，KL 作独立 actor regularizer）；DAPO/Dr.GRPO 等 long-CoT recipe 开始质疑 reference KL 本身，no KL 不是免费午餐，稳定性压力转给 clip、reward design、sampling 和监控。读代码判断：rewards 含 non_score_reward→reward-side；有独立 kl_loss→loss-side。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "6a32bffe000000001101aa0c", "url": "https://www.xiaohongshu.com/explore/6a32bffe000000001101aa0c?xsec_token=ABj86SkxO9_n7dyYu_MDy2AjdfzkGmJxBhHlTG9nbAM_E=&xsec_source=pc_user", "title": "面试官： KL 到底放 Reward 还是 Loss？" }
-          ]
-        },
-        {
-          "point": "业界 agentic RL 算法普遍采用最简单的 GRPO 形式，非科研可直接参考",
-          "detail": "相关论文大多比较 tricky，但业界普遍用最简单的 GRPO：在整个 episode 上给一个 reward，训练时多轮直接 concat，不区分不同 step。如果不是为了科研，直接参考 GRPO 方案即可。",
+          "point": "Claude Code的检索用grep，更适合代码等结构化数据，语义理解能力不如向量RAG",
+          "detail": "CC的记忆系统检索策略只查200份记忆文件，先按frontmatter轻量粗筛再由sonnet精选。千份文档场景下单次提问token消耗巨大，不适合直接用CC替代RAG。",
           "quality": "medium",
           "sources": [
-            { "note_id": "69f22c620000000022025283", "url": "https://www.xiaohongshu.com/explore/69f22c620000000022025283?xsec_token=ABrHBu_UR-t3UsOyN9OL-yi9lHeMaEnp3i51CfMNZHkSs=&xsec_source=pc_user", "title": "agentic rl算法侧" }
+            {
+              "note_id": "69edf5090000000035030f02",
+              "url": "https://www.xiaohongshu.com/explore/69edf5090000000035030f02?xsec_token=ABOHgtp5X742J9FuTXeyBydgJ7Oeg-z6_8mR7FPLea21c=&xsec_source=pc_user",
+              "title": "千份文档用不上RAG吗？"
+            }
           ]
         }
       ]
     },
     {
-      "topic": "后训练：SFT / RL / 蒸馏（OPD）",
+      "topic": "推理优化与部署",
       "points": [
         {
-          "point": "SFT、RL、OPD 本质都是在重塑模型输出分布，区别只在“目标分布是什么、数据从哪来”",
-          "detail": "一篇 blog（nrehiew）的核心 framing：SFT 遗忘多是因为目标分布外部固定、离多远硬拉多远；RL 遗忘少是因为数据从自身采样、隐式锚定在原始策略附近；OPD 继承 RL 的抗遗忘是因为同样 on-policy sampling。三者区别归根到底是“数据从谁的分布里来”这一变量，on-policy data 是核心。",
+          "point": "Flash Attention核心思路：Online Softmax + Tiling，将Attention从IO-bound变为compute-bound",
+          "detail": "通过分块计算避免存储N×N中间矩阵，只需维护(m, ℓ, a)三个量即可递推计算完整Attention。Online Softmax实现单遍扫描：动态维护当前max和指数和，用修正因子e^(m_old - m_new)更新历史累积。分块策略受SRAM容量M约束，典型块大小Bc=⌈M/(4d)⌉。IO复杂度从标准O(Nd+N²)降至O(N²d²/M)，达到信息论下界。利用线性组合视角（Oi = Σ Sik·Vk）实现分块累积。",
           "quality": "high",
           "sources": [
-            { "note_id": "6a2e6a78000000002101b784", "url": "https://www.xiaohongshu.com/explore/6a2e6a78000000002101b784?xsec_token=ABxSpNAJIZ6n94O5sVBon_MtpDB0QTdsUfj0vufRD-6h0=&xsec_source=pc_user", "title": "最近最喜欢的一篇blog：关于post-training" }
+            {
+              "note_id": "69cd3bb8000000001a032a64",
+              "url": "https://www.xiaohongshu.com/explore/69cd3bb8000000001a032a64?xsec_token=AB4O8ZWfi-xUwvAijKGIwAPjZpCXbwd68hS_e4QH4igDQ=&xsec_source=pc_user",
+              "title": "Flash Attention｜显存占用降低、速度更快"
+            }
           ]
         },
         {
-          "point": "反直觉实验：从“遗忘严重”的 SFT teacher 蒸馏出的 student 反而不怎么遗忘",
-          "detail": "用 SFT 和 RL 各训一个 teacher（RL teacher 表现好不遗忘，SFT teacher 学会任务但遗忘严重），再用 On-Policy Distillation 让 student 分别跟两个 teacher 学，两个 student 最终几乎一样好且都超过 RL teacher。原因是 OPD 数据由 student 自己采样，teacher 只提供方向，student 每步都锚定在自己分布附近。",
+          "point": "学术代码常见6大GPU训练速度杀手，优化后速度可轻松翻倍",
+          "detail": "包括：不用fp16/bf16混合精度、不用torch.compile、H200/B200上不用flash attention 3/4仍用sdpa、能用FSDP Zero2/3却优先用gradient checkpointing、每step用.item()记录loss、dataloader和预读取未设置好导致IO瓶颈。即使<1B小模型也需要做训练效率优化。",
           "quality": "high",
           "sources": [
-            { "note_id": "6a2e6a78000000002101b784", "url": "https://www.xiaohongshu.com/explore/6a2e6a78000000002101b784?xsec_token=ABxSpNAJIZ6n94O5sVBon_MtpDB0QTdsUfj0vufRD-6h0=&xsec_source=pc_user", "title": "最近最喜欢的一篇blog：关于post-training" }
+            {
+              "note_id": "69d9298c00000000220275bf",
+              "url": "https://www.xiaohongshu.com/explore/69d9298c00000000220275bf?xsec_token=ABcT4s4DYbPQTi1DPu19wWeUKUU4HMqblK0GZBbcBkLgI=&xsec_source=pc_user",
+              "title": "论为什么有点GPU的课题组都应该配一个infra"
+            }
           ]
         },
         {
-          "point": "OPD（On-Policy Distillation）= on-policy 数据采集 + token-level 蒸馏",
-          "detail": "让 student 先按当前策略生成 prefix，teacher 只在 student 真实走到的 prefix 上给 token-level 监督（不生成完整答案）。loss 选择遵循“先问 prefix 是否 on-policy，再问 teacher 是否给 token distribution，最后才问 KL 方向”：多解/开放生成用 FKL/JSD，数学/可验证推理用 RKL/advantage，teacher 高熵 token 多用 EOPD，teacher-student gap 大用 JSD/GKD 插值。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "6a2f652b000000000f0170a3", "url": "https://www.xiaohongshu.com/explore/6a2f652b000000000f0170a3?xsec_token=ABmMFWR9z4k4ztyjRZv8SUF7jR8l1Am7IRL6P2gKbHlEc=&xsec_source=pc_user", "title": "OPD：大模型后训练中的在线策略蒸馏" }
-          ]
-        },
-        {
-          "point": "如何判断 SFT 到什么程度可以开始做 RL：三个信号",
-          "detail": "SFT 建立基础能力（格式、指令遵循），RL 优化输出质量，两者不能互相替代；过早做 RL 会训练崩溃（低奖励陷阱、策略崩塌、KL 散度爆炸），过晚浪费算力。可停止 SFT 的信号：①格式和能力已对齐（指令理解准确率>85%）；②性能达上限（验证集 Loss 稳定、关键指标多轮不再提升、继续加数据过拟合）；③pass@k 明显高于 pass@1（说明模型知道答案形态但输出不稳定，RL 能把“偶尔正确”变“稳定正确”）。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "69dde2190000000023025763", "url": "https://www.xiaohongshu.com/explore/69dde2190000000023025763?xsec_token=ABBArpNrbzftITf6iNmgieC2UrWQmVz5VNxqxQC5zfotA=&xsec_source=pc_user", "title": "如何判断SFT到什么程度就可以开始做RL了？" }
-          ]
-        }
-      ]
-    },
-    {
-      "topic": "推理优化与高性能算子",
-      "points": [
-        {
-          "point": "Batch Size 越大显卡越“卖力”的本质：把访存 Bound 转成算力 Bound",
-          "detail": "AI 芯片“重算轻搬”：HBM3 卡算力≈2000 TFLOPS、带宽≈4.8 TB/s，机器算术强度≈416 FLOPs/Byte，即每搬 1 字节要算 416 次以上才不饿肚子。Batch=1 时算术强度仅 2，99% 时间在等数据（访存 Bound）；Batch=N 时权重驻留缓存复用 N 次，算术强度线性飙升，跨越 416 临界点进入算力 Bound。大 Batch 提吞吐但增加单请求延迟，这是用空间换时间，也是 vLLM 等卷“连续批处理”的原因。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "6a321829000000000f00597f", "url": "https://www.xiaohongshu.com/explore/6a321829000000000f00597f?xsec_token=ABj86SkxO9_n7dyYu_MDy2Am_OZ5I_akeCziH2kvTO2jk=&xsec_source=pc_user", "title": "为什么Batch Size越大，显卡跑得越“卖力”" }
-          ]
-        },
-        {
-          "point": "手写 GPU 算子的技术选型：永远先 torch.compile，不足再上 Triton，最后才手写 CUDA",
-          "detail": "CS336 第六讲以 GeLU 为例：CUDA C++ 最底层、开发调试成本极高；Triton 把抽象从线程提升到线程块、性能与 CUDA 持平但效率高；torch.compile 一行代码自动融合、GeLU 案例最快(1.47ms)。非融合与融合实现性能差距可达近 8 倍。核函数融合（Kernel Fusion）把多层计算打包成一个计算图减少内存带宽压力。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "6a26e02b000000002202b584", "url": "https://www.xiaohongshu.com/explore/6a26e02b000000002202b584?xsec_token=AB8lZA9AvtPNCQ4uCqHwEEruzdvEEYEVjEGL9W2h_VPzI=&xsec_source=pc_user", "title": "CS336 Lecture 6 笔记：手写高性能算子实战" }
-          ]
-        },
-        {
-          "point": "GPU 基准测试的两个易错点：Warm-up 与 Synchronization",
-          "detail": "①Warm-up：第一次跑 PyTorch 有编译机器码、发指令、分配内存池等一次性开销，不预热测的是含启动开销的速度；②Synchronization：CPU/GPU 异步，CPU 提交任务后立即往下走，不调 torch.cuda.synchronize() 会在 GPU 还在工作时就记录结束时间，测到的时间无限接近零。永远先测量定位瓶颈再优化，且优化有边际效应（8.1ms→1.1ms 值得，1.1ms→1.0ms 可能不值）。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "6a26e02b000000002202b584", "url": "https://www.xiaohongshu.com/explore/6a26e02b000000002202b584?xsec_token=AB8lZA9AvtPNCQ4uCqHwEEruzdvEEYEVjEGL9W2h_VPzI=&xsec_source=pc_user", "title": "CS336 Lecture 6 笔记：手写高性能算子实战" }
-          ]
-        },
-        {
-          "point": "混元 Hunyuan 3.0（285B MoE）推理优化实战：算子融合 + 多级 KV Cache + 量化",
-          "detail": "H20 上：rope/norm/量化/写 KV cache 全融成一个只读一次数据→5x；采样小 kernel（Top-K/Top-P/温度/softmax）从十几个压成两个→2.5~3.2x；Router GEMM 用两个 BF16 拼 FP32 精度跑 Tensor Core→约 3x；三级 KV Cache(HBM→DRAM→本地盘)命中省约 10% 计算；W4A8 量化精度差<1% 而吞吐+28%。Blackwell 上 weight offloading 把 285B 模型塞进一张卡，H2D/D2H 与计算 overlap，QPM 最高+28%。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "6a2ede96000000001602730f", "url": "https://www.xiaohongshu.com/explore/6a2ede96000000001602730f?xsec_token=ABxSpNAJIZ6n94O5sVBon_MqrWsj1kqHLTrfl2_b7nDpo=&xsec_source=pc_user", "title": "腾讯混元 × NVIDIA 推理优化分享" }
-          ]
-        },
-        {
-          "point": "FlashQLA：基于 TileLang 的高性能线性注意力算子库，GDN 前向加速 2-3 倍",
-          "detail": "针对 Qwen3-Next 起成为主力的 Gated Delta Network(GDN)：利用 GDN gate 指数衰减性质自动开启卡内序列并行；对 Chunked Prefill 前反向做硬件友好的代数改写降低 Tensor Core/CUDA Core/SFU 开销；用 TileLang 构建 fused kernel + warpgroup specialization 把数据搬运与计算高效重叠。前向 2-3x、反向 2x。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "69f1e54f000000003703624a", "url": "https://www.xiaohongshu.com/explore/69f1e54f000000003703624a?xsec_token=ABIEwk4PhRGIKzHRfQ4VA3qU3ZhYVvi0KJIVG8_DjZTc8=&xsec_source=pc_user", "title": "👀FlashQLA开源，线性注意力再提速" }
-          ]
-        },
-        {
-          "point": "一个 Token 的完整旅程：从用户请求到 LLM 推理的全链路系统视角",
-          "detail": "用户输入→DNS 解析→TCP+TLS→负载均衡→API 网关(鉴权/计费)→数据库 CRUD→LLM Inference(Prefill 算 KV Cache / Decode 逐 token 生成)→审计记账→HTTP 响应。并发模型本质都是描述计算图：SMT(超线程)、SIMD(单指令多数据,如 AVX-512/FMA)、SIMT(GPU 大量线程共享 PC)；Tensor Core 一条指令完成 GEMM；BLAS-3 的 GEMM 最关键。",
+          "point": "Temperature=0时LLM推理结果仍可能不确定，原因与GPU底层计算架构有关",
+          "detail": "从GPU架构底层来看，即使将Temperature设为0，LLM推理仍存在非确定性现象。",
           "quality": "medium",
           "sources": [
-            { "note_id": "6a1bb14d0000000036003c6a", "url": "https://www.xiaohongshu.com/explore/6a1bb14d0000000036003c6a?xsec_token=ABzzq2aMyi3qb5yU4QnL0fLjmN4QZXB4x5uQOJMw-WWBs=&xsec_source=pc_user", "title": "一个 Token 的完整旅程" }
-          ]
-        }
-      ]
-    },
-    {
-      "topic": "模型结构与位置编码",
-      "points": [
-        {
-          "point": "RoPE 的“快慢针”设计哲学：高频特征像显微镜、低频特征像望远镜",
-          "detail": "前几对特征转速极快（高频）：能精准区分相邻极近的词，但转几圈就“套圈”(Aliasing)、距离一长就迷路；最后几对特征转速极慢（低频）：能处理长距离宏观夹角不套圈，但对相邻词几乎没反应。类似汽车里程表的进位制：个位跳动快、万位半天不动。RoPE 把 128 个特征分工（前 1/3 抓语法、中 1/3 抓逻辑、后 1/3 抓长文档定位）；Llama-3 调大 theta 本质是加更慢的“世纪指针”撑起 128k 视野。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "69f09406000000003502e1f7", "url": "https://www.xiaohongshu.com/explore/69f09406000000003502e1f7?xsec_token=ABZzlQK3SGCP2M-YnuZzgu5YJmTUIPIF4Lsj0oAfiIDjM=&xsec_source=pc_user", "title": "vllm语义路由35 - RoPE的“快慢针”讲透了" }
+            {
+              "note_id": "69aaa08c000000000e03e4d3",
+              "url": "https://www.xiaohongshu.com/explore/69aaa08c000000000e03e4d3?xsec_token=ABOsEIl3Qd-V28wZO9YPFeN4TlHs1AeaMLP-g6ViB1xfo=&xsec_source=pc_user",
+              "title": "深度揭秘Temperature = 0的非确定性"
+            }
           ]
         },
         {
-          "point": "字节 Seed 把 VAE 从多模态模型里拿掉：Representation Forcing 让模型自己预测中间表征",
-          "detail": "主流统一多模态模型（BAGEL/Janus/Show-o）依赖冻结的外挂 VAE，冻住后无法训练优化。RF 让解码器先自回归预测特征 token(用 DINOv3 提取)，再在像素空间扩散，特征 token 留在序列里作 in-context conditioning 通过共享自注意力指导像素生成。关 RF 纯像素 GenEval 仅 0.25，开 RF 到 0.76 追平 VAE-based。关键发现：把特征放进序列直接参与自注意力(预测)比在 loss 里间接约束(对齐,REPA 仅 0.43)有效得多；离散 token(0.76) 远好于连续回归(0.26)。论文 arxiv 2605.31604。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "6a1d9ee40000000006031606", "url": "https://www.xiaohongshu.com/explore/6a1d9ee40000000006031606?xsec_token=ABrCkj-6ZXJ4P2zrVlgkN2uqdDEaMeLa-yMAyNt3gOwIc=&xsec_source=pc_user", "title": "字节seed把VAE从多模态模型里拿掉了" }
-          ]
-        }
-      ]
-    },
-    {
-      "topic": "多模态 / 全模态",
-      "points": [
-        {
-          "point": "南大开源 OmniVideo-100K：用“实体锚定 + 线索引导”解决视听数据集音画割裂问题",
-          "detail": "现有视听 QA 数据集通病：视频切片后音视频各自描述、关联被切断，同一实体跨片段指代漂移（上段“白衣女子”下段“金发女性”）。OmniVideo-100K(10万 QA、5214 视频、平均 103 秒)两阶段：①实体锚定脚本化——给实体统一标识、语音标注说话人，产出结构化脚本；②线索引导 QA 生成——先挖掘跨片段跨模态线索链再出题，天然具备长时域依赖。测试集过滤单模态可答题后通过率仅 38%；VITA-1.5 提升 20.59%、Qwen3-Omni 提升 13.86%。arXiv 2606.14702。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "6a30285d0000000008000ea5", "url": "https://www.xiaohongshu.com/explore/6a30285d0000000008000ea5?xsec_token=ABd5QIBuV1h13XxepZXevyiNFF9CB5A1OEE3VCwUzuP3c=&xsec_source=pc_user", "title": "全模态训练有救了！南大开源OmniVideo-100K" }
-          ]
-        }
-      ]
-    },
-    {
-      "topic": "推荐系统（生成式推荐 / 语义ID）",
-      "points": [
-        {
-          "point": "语义 ID 必须融入协同信号：纯语义 ID 只知“内容像不像”，推荐更关心“用户会不会点”",
-          "detail": "四种结合方式：①QARM 先对齐后量化（两阶段，量化可能破坏对齐）；②LETTER 先学 CF embedding 再做 tokenization（引入用户行为信号但依赖高质量 CF、冷启动有限）；③DAS（快手工业级）一阶段联合优化量化+CF去偏+双端对齐，同时对齐 user 和 item；④CoFiRec 粗到细生成 + 最后一级 CF token 消歧（乐器→电吉他→Yamaha Pacifica→CF token）。共同点都是把内容语义与协同过滤信号结合。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "69f079e20000000038020a4e", "url": "https://www.xiaohongshu.com/explore/69f079e20000000038020a4e?xsec_token=ABZzlQK3SGCP2M-YnuZzgu5Sh_S40dMBJtgSUwCFGthl4=&xsec_source=pc_user", "title": "语义ID x 协同信号：4种典型方法综述" }
-          ]
-        },
-        {
-          "point": "推荐算法正从传统级联架构(DLRM)向生成式推荐(GR)过渡，2026 进入推理增强期",
-          "detail": "时间轴：2023 Google TIGER 首提 Semantic ID+RQ-VAE 开创 GR；2024 Meta HSTU 验证 Scaling Law；2025 快手 OneRec 端到端替换级联、字节 RankMixer 上线抖音；2026 进入 Reasoning×Rec（Test-Time Scaling）。五大方向：推理增强推荐、全场景统一推荐大模型(One-Model)、多模态 Semantic ID+动态索引、LLM 基座直接适配推荐、搜广推统一+Agent 化广告投放。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "69fb0eca00000000350321cd", "url": "https://www.xiaohongshu.com/explore/69fb0eca00000000350321cd?xsec_token=ABXgDQMvXmyiNOOotZ2J1-8H76h-qZE60kMd4QgKt-glc=&xsec_source=pc_user", "title": "推荐算法的一些进展和总结" }
-          ]
-        }
-      ]
-    },
-    {
-      "topic": "Agent 工程与评估（Eval）",
-      "points": [
-        {
-          "point": "Agent Eval 是近中期最实在的技术护城河：eval 是你的梯度，沉淀的 ground truth 才值钱",
-          "detail": "底座模型差不多，拉开差距的是谁能把“好/坏”定义得更准。值钱的不是 eval 框架（开源一抓一把），而是“在我业务里什么叫做对了”这套攒出来的 ground truth。三层评估：①单条轨迹打分——能用代码判的(格式/工具调用/数字)绝不交给模型，剩下才用 LLM as judge，且 judge 本身也得先被人工金标准对齐；②群体聚类；③闭环加速器。要评的是整条轨迹（怎么想/调什么工具/如何决策），不是最后那段文本——最终答案对但轨迹是定时炸弹的 case 很常见。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "6a1915af000000003502bbdf", "url": "https://www.xiaohongshu.com/explore/6a1915af000000003502bbdf?xsec_token=ABdgH9M6cIfyNPAvVQmumOJXEicBJhGhHpPvaRwk7YZl8=&xsec_source=pc_user", "title": "Agent Eval 是近中期的技术护城河" }
-          ]
-        },
-        {
-          "point": "Agent 的迭代带复利：前期在 verification 上偷的懒，后面用十倍返工还回来",
-          "detail": "方向对了复利向上，错了就错上加错。喂进去的 ground truth 若本身是错的，agent 不会纠偏，只会拿着歪尺子自信跑偏。coding agent 尤其凶险——容易在错误地基上叠错误，语法全对跑得通但全错。Claude Code 团队数据：真正算“AI”的部分约占 1.6%，剩下 98.4% 是 plumbing（上下文管理、工具编排、错误恢复）。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "6a1915af000000003502bbdf", "url": "https://www.xiaohongshu.com/explore/6a1915af000000003502bbdf?xsec_token=ABdgH9M6cIfyNPAvVQmumOJXEicBJhGhHpPvaRwk7YZl8=&xsec_source=pc_user", "title": "Agent Eval 是近中期的技术护城河" }
-          ]
-        },
-        {
-          "point": "全自动 AI 短剧/漫剧创作系统：把不可控的 AIGC 变成可回滚的工程流水线",
-          "detail": "从用户需求结构化处理，到任务拆解流水线（Planner、Storyboard、Prompt Builder），再到 Script 与 Storyboard Evaluator 的自我反馈机制，把不可控的 AIGC 过程做成可回滚的工程流水线。",
+          "point": "SFT后模型在vLLM推理时出现结构乱码和重复输出，关闭prefix caching可解决",
+          "detail": "排查了重复惩罚、template对齐等问题均无效，最终发现vLLM的prefix caching功能导致GRPO推理阶段输出异常，关闭该功能后恢复正常。",
           "quality": "medium",
           "sources": [
-            { "note_id": "69f85673000000001a02e89f", "url": "https://www.xiaohongshu.com/explore/69f85673000000001a02e89f?xsec_token=ABjtxZkRNcWMTtuShTu5ivabAsSG8-6M5yzBhAcJ7imd8=&xsec_source=pc_user", "title": "如何设计一个全自动AI短剧创作系统？" }
+            {
+              "note_id": "69e25acc000000002200260c",
+              "url": "https://www.xiaohongshu.com/explore/69e25acc000000002200260c?xsec_token=ABldtqIZ9kHsFQfbesiqh_3trfzdiXpG_a8-UE4gMG2Io=&xsec_source=pc_user",
+              "title": "训练的一个小问题"
+            }
           ]
         }
       ]
     },
     {
-      "topic": "AI 编程工作流（Vibe Coding）",
+      "topic": "Transformer/注意力机制",
       "points": [
         {
-          "point": "Vibe Coding 最重要的技能是 Git，不是提示词：AI 只有上下文没有版本记忆",
-          "detail": "AI 写着写着会把原来能跑的项目改坏，且让它回退“回退一次错一次”，因为它记得你上句说什么、但不记得项目上一秒长什么样。Git 给项目打本地安全存档点，AI 再抽风也能一句话回到从前。核心 6 命令：git add(准备存档)、commit(创建存档点)、reset --hard(改坏了读档)、branch(开新世界线)、checkout(切换)、merge(合回主线)。注意 Git≠GitHub，对 Vibe Coding 最重要的是本地存档而非上传。",
+          "point": "Q和K若共享权重矩阵，注意力分数矩阵QK^T会变成对称矩阵，导致丢失方向性依赖信息",
+          "detail": "若W_Q=W_K，则QK^T = XWW^TX^T是对称的，意味着token A对B的注意力必然等于B对A的注意力，而语言中充满不对称依赖。W_Q提取'这个词当前在寻找什么信息'，W_K提取'这个词能被匹配到的特征'，两个空间语义角色完全不同。分开Q和K是深度学习的普遍原则：语义上不同的事物应给予不同参数让模型自主学习区分。",
           "quality": "high",
           "sources": [
-            { "note_id": "6a282663000000000702fa77", "url": "https://www.xiaohongshu.com/explore/6a282663000000000702fa77?xsec_token=AB2DHHF_ADyWYAdPi5dG5K1kp5dle5ufVhCxPhil4s9zg=&xsec_source=pc_user", "title": "VibeCoding改崩后，我才意识到Git的重要性" }
+            {
+              "note_id": "69ca50ae0000000021010633",
+              "url": "https://www.xiaohongshu.com/explore/69ca50ae0000000021010633?xsec_token=ABQfDabu8DDBJmliTeedynlWgy-h_Eh0nz3QPYeuwdSFM=&xsec_source=pc_user",
+              "title": "Query 和 Key 在注意力机制中长得几乎一模"
+            }
           ]
         }
       ]
     },
     {
-      "topic": "微调入门",
+      "topic": "模型微调与训练",
       "points": [
         {
-          "point": "单卡入门微调首选 LoRA：只训低秩矩阵，参数量降到千分之一",
-          "detail": "LoRA 不改原模型参数、只额外训练低秩矩阵，24G 显存可跑 7B 模型两小时见效。数据用指令-响应对(JSON/CSV)，几百到几千条即可，质量比数量重要。模型从 7B 的 chat 版本起步(如 Qwen2.5-7B-Instruct，不要 base)，显存不够上 4bit 量化(QLoRA 可把 7B 压到约 11G)。用 HuggingFace Transformers+PEFT，学习率 1e-5~1e-4、训练 3~5 轮(太多过拟合)。注意灾难性遗忘：混入通用问答数据可缓解。",
-          "quality": "high",
+          "point": "学习率是调参第一优先级，必须配合衰减策略一起调，建议加warmup",
+          "detail": "loss不动多半lr太小，剧烈波动是lr太大。配cosine衰减曲线更顺滑。从极小学习率逐步上调观察Loss下降最快的区间选中间值。Batch Size调大时lr需同步线性放大（η_new = η_old × BatchSize_new/BatchSize_old）。显存不足用梯度累积替代。",
+          "quality": "medium",
           "sources": [
-            { "note_id": "6a19248d00000000070202c3", "url": "https://www.xiaohongshu.com/explore/6a19248d00000000070202c3?xsec_token=ABdgH9M6cIfyNPAvVQmumOJWy57wd_e_YaiwtxghPofoo=&xsec_source=pc_user", "title": "大模型微调心得" }
+            {
+              "note_id": "69d4804f00000000230273af",
+              "url": "https://www.xiaohongshu.com/explore/69d4804f00000000230273af?xsec_token=ABgsi99iZrhVhphVreEJdDVNOdMOokE6BDvr1_UXPo3S8=&xsec_source=pc_user",
+              "title": "改模型、调参的血泪经验总结✨深度学习人必"
+            },
+            {
+              "note_id": "69d8bd1c000000002103a1af",
+              "url": "https://www.xiaohongshu.com/explore/69d8bd1c000000002103a1af?xsec_token=AB7GOLRO28Qft_oM4wpWDnEcyEn14wduWUJl9FoUqYayw=&xsec_source=pc_user",
+              "title": "模型调参核心经验总结"
+            }
           ]
         },
         {
-          "point": "学习路径参考：MiniMind（从零造小模型懂原理）vs MedicalGPT（用大模型教领域知识）",
-          "detail": "MedicalGPT 走微调思路、工业落地：Base→PT增量预训练→SFT→DPO/RLHF/GRPO/ORPO/OPD，全基于 HuggingFace transformers+trl+peft。MiniMind 走教学思路、底层能力：随机初始化→从零预训练→SFT→LoRA→DPO→PPO/GRPO/CISPO→Agentic RL→KD，全 PyTorch 原生手写(含 Transformer/RoPE/GQA/MoE)。一句话：MedicalGPT=用别人的大模型教它医学知识，MiniMind=自己造小模型理解 LLM 全部原理。",
+          "point": "优化器优先选Adam/AdamW，先让模型在小数据集上过拟合验证网络结构再加正则",
+          "detail": "Adam默认参数通常够用，AdamW权重衰减更合理泛化更强。先不加任何正则化确认模型能正常收敛，再加L2正则（1e-4~1e-5）、Dropout（0.2起步）和早停。用1000~5000条小数据集跑通流程后再全量训练。数据预处理比疯狂调参更重要。",
           "quality": "medium",
           "sources": [
-            { "note_id": "6a2e6a4d0000000035025524", "url": "https://www.xiaohongshu.com/explore/6a2e6a4d0000000035025524?xsec_token=ABxSpNAJIZ6n94O5sVBon_MtBxKDz5OMUnaeKa_UdeF8M=&xsec_source=pc_user", "title": "大模型算法找实习" }
-          ]
-        }
-      ]
-    },
-    {
-      "topic": "产品观察与行业",
-      "points": [
-        {
-          "point": "地图 AI 在多 POI 检索场景体验远不如 chatbot，差距在信息准确性、解释性与场景承接",
-          "detail": "以“湖南大学附近办谢师宴，预算600，11人”实测地图御三家(高德/百度/腾讯)与 chatbot 御三家(豆包/千问/元宝)：地图 AI 体验远不如 chatbot。腾讯地图需求理解准、多 POI 一键收藏好(3.5星)但有错误 POI/解释性差/排序逻辑不明；高德解释性好但多 POI 承接弱(3星)；百度仅 1 星。核心结论：地图 AI 要提升日活留存，信息准确性/解释性/可信度需和 chatbot 拉齐，且要挖掘底图(POI扎点)对对话流的互补解释价值，AI 时代最重要的是数据。",
-          "quality": "high",
-          "sources": [
-            { "note_id": "6a1c29d20000000036003328", "url": "https://www.xiaohongshu.com/explore/6a1c29d20000000036003328?xsec_token=ABdLj1minUrfDXKsUXTjdw0pS1DX-i2sMu4aaO-VGQXw4=&xsec_source=pc_user", "title": "地图ai潜力好大体验好差" }
+            {
+              "note_id": "69d4804f00000000230273af",
+              "url": "https://www.xiaohongshu.com/explore/69d4804f00000000230273af?xsec_token=ABgsi99iZrhVhphVreEJdDVNOdMOokE6BDvr1_UXPo3S8=&xsec_source=pc_user",
+              "title": "改模型、调参的血泪经验总结✨深度学习人必"
+            },
+            {
+              "note_id": "69d8bd1c000000002103a1af",
+              "url": "https://www.xiaohongshu.com/explore/69d8bd1c000000002103a1af?xsec_token=AB7GOLRO28Qft_oM4wpWDnEcyEn14wduWUJl9FoUqYayw=&xsec_source=pc_user",
+              "title": "模型调参核心经验总结"
+            }
           ]
         },
         {
-          "point": "（观点）开源模型性价比冲击闭源：GLM 系列用更小参数打平 Opus/GPT 而价格仅 1/13",
-          "detail": "帖子观点：glm5.2 基模用 deepseekv3.2，800 级参数已能打平 opus 4.7 和 gpt5.4，价格是其 1/13，质疑 OpenAI/Anthropic 的垄断溢价逻辑可能崩盘。注：此为作者观点性讨论，含较多主观推测。",
+          "point": "关注loss走势比盯准确率更重要，训练loss降+验证loss升=过拟合",
+          "detail": "两边都降但很慢说明模型容量不够；两边都不动通常是lr太小或结构太弱。早停是最省心的防过拟合手段。",
           "quality": "medium",
           "sources": [
-            { "note_id": "6a2f60ba0000000017008461", "url": "https://www.xiaohongshu.com/explore/6a2f60ba0000000017008461?xsec_token=ABmMFWR9z4k4ztyjRZv8SUF14-lxAzrOnqcsxb4JZVLkw=&xsec_source=pc_user", "title": "这下 Claude 和 OpenAi 真面临斩杀线了" }
+            {
+              "note_id": "69d4804f00000000230273af",
+              "url": "https://www.xiaohongshu.com/explore/69d4804f00000000230273af?xsec_token=ABgsi99iZrhVhphVreEJdDVNOdMOokE6BDvr1_UXPo3S8=&xsec_source=pc_user",
+              "title": "改模型、调参的血泪经验总结✨深度学习人必"
+            }
+          ]
+        },
+        {
+          "point": "pairwise最优比例不能直接相加推导多源混训比例，1:1:4比1:1:2更稳妥",
+          "detail": "已知a:c=1:2、b:c=1:2时，若设1:1:2则总辅助强度(a+b):c=1:1，辅助数据量翻倍过于激进；设1:1:4则(a+b):c=1:2，总辅助强度保持在单辅助源实验的量级。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69dbddeb000000001d01ca7a",
+              "url": "https://www.xiaohongshu.com/explore/69dbddeb000000001d01ca7a?xsec_token=AB6yRoxl5cFGau2Urxpga2DEK2iTLU7Ewn38sJ3ZToV_w=&xsec_source=pc_user",
+              "title": "已知pairwise最优混合训练比例怎么定？"
+            }
+          ]
+        },
+        {
+          "point": "多数据源混训的核心是控制总辅助强度而非机械满足每个pairwise比例",
+          "detail": "不同辅助数据源可能互补也可能梯度冲突，收益不能线性叠加。相关工作包括Multi-Task Learning as Multi-Objective Optimization、PCGrad、DoReMi、Data Mixing Laws。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69dbddeb000000001d01ca7a",
+              "url": "https://www.xiaohongshu.com/explore/69dbddeb000000001d01ca7a?xsec_token=AB6yRoxl5cFGau2Urxpga2DEK2iTLU7Ewn38sJ3ZToV_w=&xsec_source=pc_user",
+              "title": "已知pairwise最优混合训练比例怎么定？"
+            }
+          ]
+        },
+        {
+          "point": "sampling ratio和loss weight需区分使用场景",
+          "detail": "若a/b/c是独立数据池，优先调sampling ratio（每轮看多少各类数据）；若同一批样本有多个loss（分类/回归/对比），优先调loss weight。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69dbddeb000000001d01ca7a",
+              "url": "https://www.xiaohongshu.com/explore/69dbddeb000000001d01ca7a?xsec_token=AB6yRoxl5cFGau2Urxpga2DEK2iTLU7Ewn38sJ3ZToV_w=&xsec_source=pc_user",
+              "title": "已知pairwise最优混合训练比例怎么定？"
+            }
+          ]
+        },
+        {
+          "point": "实操建议：以1:1:4为起点做小范围sweep",
+          "detail": "围绕初始点试1:1:6、1:1:4、1:1:3、1:1:2，用目标任务c的dev指标决定最终比例。若观察到a和b互补且梯度冲突不明显，可往更激进比例推。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69dbddeb000000001d01ca7a",
+              "url": "https://www.xiaohongshu.com/explore/69dbddeb000000001d01ca7a?xsec_token=AB6yRoxl5cFGau2Urxpga2DEK2iTLU7Ewn38sJ3ZToV_w=&xsec_source=pc_user",
+              "title": "已知pairwise最优混合训练比例怎么定？"
+            }
+          ]
+        },
+        {
+          "point": "EPI（Evolving Parameter Isolation）框架：利用基于梯度的信号定期更新隔离掩码解决SFT中参数重要性时间偏移问题",
+          "detail": "传统参数隔离方法假设参数重要性一旦确定就不变，但实验证明训练过程中参数重要性会动态变化。EPI根据参数重要性的在线估计动态调整隔离决策，保护新出现的任务关键参数同时释放过时参数，在多任务基准上一致减少了干扰和遗忘。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69eafed3000000002202475f",
+              "url": "https://www.xiaohongshu.com/explore/69eafed3000000002202475f?xsec_token=ABqorvrSCG_9Yd5qt8gVv0lHsXOdKDg0eiax-qxbvCP98=&xsec_source=pc_user",
+              "title": "如何评价 腾讯混元×元宝在ACL录用的论文！"
+            }
+          ]
+        },
+        {
+          "point": "多任务SFT的核心问题：学习新能力的激进更新会与已有知识冲突，导致跷跷板现象和灾难性遗忘",
+          "detail": "所有任务共享高维参数空间，更新哪些参数比学不学得会更关键。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69eafed3000000002202475f",
+              "url": "https://www.xiaohongshu.com/explore/69eafed3000000002202475f?xsec_token=ABqorvrSCG_9Yd5qt8gVv0lHsXOdKDg0eiax-qxbvCP98=&xsec_source=pc_user",
+              "title": "如何评价 腾讯混元×元宝在ACL录用的论文！"
+            }
+          ]
+        },
+        {
+          "point": "SFT中合成无CoT的短QA数据比带think的CoT数据准确率更高，加入CoT数据反而掉点",
+          "detail": "作者在qwen2.5vl-instruct-7b上全参SFT（数据量40-50万），发现CoT可能稀释了答案信号。推测带反思的CoT（先给错误推理再纠正）可能效果更好，但回答长度会增加。",
+          "quality": "medium",
+          "sources": [
+            {
+              "note_id": "69eb6d190000000037035497",
+              "url": "https://www.xiaohongshu.com/explore/69eb6d190000000037035497?xsec_token=ABoBkHdzMsk0eo2u3EuRzPKwlgy9TKEiCM0T1DgljwPPM=&xsec_source=pc_user",
+              "title": "大模型看！尝试！"
+            }
+          ]
+        },
+        {
+          "point": "DSS方法：将CoT从推理时必须输出的文本变为训练时的辅助监督信号",
+          "detail": "用大模型生成rationale和label，小模型做双任务训练（L=L_ans + λ·L_cot），推理时只走答案任务不输出CoT。关键是任务拆分而非串联，避免答案token信号被长CoT稀释。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e9a5e3000000002200cb38",
+              "url": "https://www.xiaohongshu.com/explore/69e9a5e3000000002200cb38?xsec_token=ABvOqkE9U-Dj2bs599W6qoF_Gdh9Zton5uzMSx7AoLkB0=&xsec_source=pc_user",
+              "title": "小红书一面：训练时教模型思考，推理只回答"
+            }
+          ]
+        },
+        {
+          "point": "双任务训练优于CoT+答案串联成单一target",
+          "detail": "单序列模式下答案token仅占target的15%训练信号，被长CoT稀释；解耦多任务模式下答案信号占比提升至55%，用两个task prefix区分输出模式更稳定。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e9a5e3000000002200cb38",
+              "url": "https://www.xiaohongshu.com/explore/69e9a5e3000000002200cb38?xsec_token=ABvOqkE9U-Dj2bs599W6qoF_Gdh9Zton5uzMSx7AoLkB0=&xsec_source=pc_user",
+              "title": "小红书一面：训练时教模型思考，推理只回答"
+            }
+          ]
+        },
+        {
+          "point": "CODI方法：将CoT推理压缩到continuous latent space",
+          "detail": "通过teacher task和student task的hidden-state alignment，让模型在潜空间完成reasoning；在GPT-2 on GSM8k上，CODI用接近Coconut的token数达到了接近CoT-SFT的准确率（约43% vs 45%）。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e9a5e3000000002200cb38",
+              "url": "https://www.xiaohongshu.com/explore/69e9a5e3000000002200cb38?xsec_token=ABvOqkE9U-Dj2bs599W6qoF_Gdh9Zton5uzMSx7AoLkB0=&xsec_source=pc_user",
+              "title": "小红书一面：训练时教模型思考，推理只回答"
+            }
+          ]
+        },
+        {
+          "point": "核心范式：CoT应被当作训练阶段的辅助监督而非推理阶段的显式产物",
+          "detail": "训练范式和部署范式可以解耦——训练阶段用CoT帮模型学会更强推理能力，推理时只保留更短更直接的答案输出路径，这与自适应思考（推理时判断是否需要思考）是不同问题。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e9a5e3000000002200cb38",
+              "url": "https://www.xiaohongshu.com/explore/69e9a5e3000000002200cb38?xsec_token=ABvOqkE9U-Dj2bs599W6qoF_Gdh9Zton5uzMSx7AoLkB0=&xsec_source=pc_user",
+              "title": "小红书一面：训练时教模型思考，推理只回答"
+            }
           ]
         }
       ]
     },
     {
-      "topic": "低质量 / 信息不足（可跳过或仅作线索）",
+      "topic": "工具与框架",
       "points": [
         {
-          "point": "以下帖子正文/图片信息过少，无法提炼出实质知识点，建议需要时直接看原帖",
-          "detail": "这些帖子多为预告、引流、纯标签或封面性质，本次抓取到的内容不足以总结：①「AI写代码还要你盯？一个Hook让它自己改」(讲 hook 实现 harness engineering，但正文仅标签无实质)；②「大模型结构第2期 阿里QwenVLA世界模型」(仅标题，无正文图文)；③「细节怪手撕 DeepSeek-V4」(仅标签)；④「GSPO 15分钟看懂」(仅标签)；⑤「微调大模型」(求创新点的提问帖)；⑥「每天给大家汇报进度」(更新预告)；⑦「帮学妹找基座实习day11」的部分为系列引流(其知识点已并入 Agentic RL 信用分配)。",
+          "point": "Claude HUD是Claude Code状态栏插件，可实时显示限额、上下文和模型信息",
+          "detail": "该插件在GitHub上有4000+ star，只需三条命令即可安装完成，帮助用户随时掌握Claude Code的使用状态。",
+          "quality": "medium",
+          "sources": [
+            {
+              "note_id": "69b78d48000000001a0213f4",
+              "url": "https://www.xiaohongshu.com/explore/69b78d48000000001a0213f4?xsec_token=ABHOvRHVEi8hYL_4ABoyMOrYy_pIrf7GBPGO33reHE-Ik=&xsec_source=pc_user",
+              "title": "Claude Code必装插件从此告别查限额强迫症"
+            }
+          ]
+        },
+        {
+          "point": "Claude Code上下文管理采用五层渐进式压缩管线，不依赖外部向量数据库",
+          "detail": "五层依次为：工具结果裁剪（超长输出存磁盘留路径）、历史截断、微压缩（删除旧工具结果）、上下文折叠（摘要但保留原始信息）、自动压缩（模型生成摘要替换全部历史）。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69d8ca2600000000230061e1",
+              "url": "https://www.xiaohongshu.com/explore/69d8ca2600000000230061e1?xsec_token=AB7GOLRO28Qft_oM4wpWDnERJtJbkBhgsXJZxp0q6yX3M=&xsec_source=pc_user",
+              "title": "算法小小怪笔记15:cc架构学习"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "低质量/可跳过",
+      "points": [
+        {
+          "point": "线性注意力进化史：从缺陷到混合架构突破",
+          "detail": "无具体知识点提取",
           "quality": "low",
           "sources": [
-            { "note_id": "69cfac6f00000000230103c2", "url": "https://www.xiaohongshu.com/explore/69cfac6f00000000230103c2?xsec_token=ABQkXJ5PV3COXT0Eb0GGrhgGE_gXuxV03ouijv_5pyWfA=&xsec_source=pc_user", "title": "AI写代码还要你盯？一个Hook让它自己改" },
-            { "note_id": "6a2ecca500000000220201f6", "url": "https://www.xiaohongshu.com/explore/6a2ecca500000000220201f6?xsec_token=ABxSpNAJIZ6n94O5sVBon_MsFBHx2Kb88SB07ajVZm0Ao=&xsec_source=pc_user", "title": "大模型结构第2期--阿里QwenVLA世界模型" },
-            { "note_id": "69f45ce5000000003700de00", "url": "https://www.xiaohongshu.com/explore/69f45ce5000000003700de00?xsec_token=ABWOo6BuG3Oy-pG_ljn3ZuidNvfZgV_3nGNFj2rOVDTHA=&xsec_source=pc_user", "title": "细节怪手撕 LLM 之 DeepSeek-V4整体介绍" },
-            { "note_id": "69f24717000000001f000337", "url": "https://www.xiaohongshu.com/explore/69f24717000000001f000337?xsec_token=ABrHBu_UR-t3UsOyN9OL-yi2IJIQxAFZ-jJ_xtkZzUKJc=&xsec_source=pc_user", "title": "【GSPO】15分钟看懂GSPO算法" },
-            { "note_id": "6a01ff1f0000000007022a71", "url": "https://www.xiaohongshu.com/explore/6a01ff1f0000000007022a71?xsec_token=ABMjX5VTb7_VX0uNlykQs2d4kzKhUbjpPZ_kSXppkO-rY=&xsec_source=pc_user", "title": "微调大模型" },
-            { "note_id": "6a243b530000000021016585", "url": "https://www.xiaohongshu.com/explore/6a243b530000000021016585?xsec_token=ABSTdXdMDw9w5SBW97wCPZPTrgbUVdw59dB862L0doG44=&xsec_source=pc_user", "title": "每天给大家汇报进度和分享！" }
+            {
+              "note_id": "69a12be1000000001a02f03f",
+              "url": "https://www.xiaohongshu.com/explore/69a12be1000000001a02f03f?xsec_token=ABcHeib8eb_fnGArX_GPUrotBxbFFPbdkfSuU9DSeY8eM=&xsec_source=pc_user",
+              "title": "线性注意力进化史：从缺陷到混合架构突破"
+            }
+          ]
+        },
+        {
+          "point": "Codex-Windows桌面端上线",
+          "detail": "无具体知识点提取",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69a9b8fa0000000015032529",
+              "url": "https://www.xiaohongshu.com/explore/69a9b8fa0000000015032529?xsec_token=ABs5KkqDt5HjpEjLlaG3OkJTDMlAOY7YwgLcPGzB2sihY=&xsec_source=pc_user",
+              "title": "Codex-Windows桌面端上线！5分钟轻松上手！"
+            }
+          ]
+        },
+        {
+          "point": "Multi-Agent什么时候该用什么时候不该用",
+          "detail": "无具体知识点提取",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69b37da1000000000600cdcb",
+              "url": "https://www.xiaohongshu.com/explore/69b37da1000000000600cdcb?xsec_token=ABWFxhn4F_DTtOakoS488bmbEI6tSxbwKH3Q-0XyjtQB0=&xsec_source=pc_user",
+              "title": "Multi-Agent什么时候该用什么时候不该用"
+            }
+          ]
+        },
+        {
+          "point": "面试官问SFT数据格式",
+          "detail": "无具体知识点提取",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69c0ea5d000000001f00522c",
+              "url": "https://www.xiaohongshu.com/explore/69c0ea5d000000001f00522c?xsec_token=ABXtHVJBbD00Q2ht0paXRrmpqKhr1pX-t1a2UNjEPONx8=&xsec_source=pc_user",
+              "title": "面试官问SFT数据格式，90%的人只答对第一层"
+            }
+          ]
+        },
+        {
+          "point": "LLM训练中遇到reward hacking处理",
+          "detail": "无具体知识点提取",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69ce5429000000001a023ece",
+              "url": "https://www.xiaohongshu.com/explore/69ce5429000000001a023ece?xsec_token=ABE29i7SbVgg9Bx3loNQZcHPSoubM9HD8jIhYkYM4guOA=&xsec_source=pc_user",
+              "title": "LLM训练中遇到reward hacking，怎么处理？"
+            }
+          ]
+        },
+        {
+          "point": "大厂黑话名词解析",
+          "detail": "非技术内容",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69cf9d41000000002103ab33",
+              "url": "https://www.xiaohongshu.com/explore/69cf9d41000000002103ab33?xsec_token=ABQkXJ5PV3COXT0Eb0GGrhgKSSI4JvvSexJbRY_dcH6b4=&xsec_source=pc_user",
+              "title": "刚来实习听不懂大厂黑话的进😇超全名词解析"
+            }
+          ]
+        },
+        {
+          "point": "微调实战-09（完）",
+          "detail": "无具体知识点提取",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69cfdaa1000000002200fd3a",
+              "url": "https://www.xiaohongshu.com/explore/69cfdaa1000000002200fd3a?xsec_token=ABQkXJ5PV3COXT0Eb0GGrhgOs4Y8yLmLNXkVsikhWPDp4=&xsec_source=pc_user",
+              "title": "微调实战-09（完）"
+            }
+          ]
+        },
+        {
+          "point": "用自然语言提示词指挥AI IDE完成Git版本管理",
+          "detail": "通过4句自然语言提示词让Cursor/Trae等AI IDE完成建库、存档、回档、分支开发四个操作，无需手动敲命令行。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69d0facf00000000210388fa",
+              "url": "https://www.xiaohongshu.com/explore/69d0facf00000000210388fa?xsec_token=ABofd2hNRirlMamVxFlATaZ4e4T6RLKRTMkjl4zRVjgeE=&xsec_source=pc_user",
+              "title": "Vibecoding新手进阶：Git存档、回档、分支"
+            }
+          ]
+        },
+        {
+          "point": "Agentic RL项目求推荐",
+          "detail": "无具体知识点提取",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69d0ff9100000000230059bc",
+              "url": "https://www.xiaohongshu.com/explore/69d0ff9100000000230059bc?xsec_token=ABofd2hNRirlMamVxFlATaZ99q4dcSUKzUplOal1XRkv8=&xsec_source=pc_user",
+              "title": "Agentic RL项目求推荐"
+            }
+          ]
+        },
+        {
+          "point": "面试官：如何从0-1设计Agent自动化评估体系",
+          "detail": "无具体知识点提取",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69d225d60000000020038c02",
+              "url": "https://www.xiaohongshu.com/explore/69d225d60000000020038c02?xsec_token=AB8zUYcAmjuDlNrFhBrfWXtMO3hPHrGbBiOgudWEL1HjY=&xsec_source=pc_user",
+              "title": "面试官：如何从0-1设计Agent 自动化评估体系"
+            }
+          ]
+        },
+        {
+          "point": "大模型Function Calling深度解析",
+          "detail": "无具体知识点提取",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69d4c5bd00000000230164b2",
+              "url": "https://www.xiaohongshu.com/explore/69d4c5bd00000000230164b2?xsec_token=ABgsi99iZrhVhphVreEJdDVC1H38IPvmVhd3ZS8JDeRM0=&xsec_source=pc_user",
+              "title": "大模型Function Calling 深度解析"
+            }
+          ]
+        },
+        {
+          "point": "如何看到矩阵（线性代数可视化）",
+          "detail": "无具体知识点提取",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69d5d092000000002301009a",
+              "url": "https://www.xiaohongshu.com/explore/69d5d092000000002301009a?xsec_token=AB0J-CCaTbOgc6DE1OQOoYy4fao01d51oqhv0CvCpUvsE=&xsec_source=pc_user",
+              "title": "如何看到矩阵?[导系列2.5番外]"
+            }
+          ]
+        },
+        {
+          "point": "大模型推理/KV Cache相关",
+          "detail": "无具体知识点提取",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69d62cdd00000000230074d5",
+              "url": "https://www.xiaohongshu.com/explore/69d62cdd00000000230074d5?xsec_token=ABD0pWlaRcNzt-cPWyj6Rh9RatE8YjL6uWyHcAnHQiJeo=&xsec_source=pc_user",
+              "title": "大模型看！尝试！"
+            }
+          ]
+        },
+        {
+          "point": "大模型推理阶段的核心本质",
+          "detail": "无具体知识点提取",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69d75c1b000000002100708d",
+              "url": "https://www.xiaohongshu.com/explore/69d75c1b000000002100708d?xsec_token=ABWym_qWIgU7CP2Y9Burj-1FLijCDSCi-c9p7Al4zxRd4=&xsec_source=pc_user",
+              "title": "面试官：大模型推理阶段的核心本质是什么？"
+            }
+          ]
+        },
+        {
+          "point": "Nginx入门教程",
+          "detail": "无具体知识点提取",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69d9f031000000001d01937c",
+              "url": "https://www.xiaohongshu.com/explore/69d9f031000000001d01937c?xsec_token=ABcT4s4DYbPQTi1DPu19wWeSFbE22OGyZ1zsgnW6IkLFs=&xsec_source=pc_user",
+              "title": "Nginx入门教程，30分钟"
+            }
+          ]
+        },
+        {
+          "point": "手撕大厂题-vibe coding降龙七步",
+          "detail": "编程面试相关，无具体知识点提炼。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69de65a5000000002301df27",
+              "url": "https://www.xiaohongshu.com/explore/69de65a5000000002301df27?xsec_token=AB36q4b_sqPb4ACWPM9Znqo26mIMourq1P-eKL2B7OsW4=&xsec_source=pc_user",
+              "title": "手撕大厂题-vibe coding降龙七步"
+            }
+          ]
+        },
+        {
+          "point": "注意力机制如何变得如此高效（第二部分）",
+          "detail": "注意力机制相关，无具体知识点提炼。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69e68d8a000000001a0284be",
+              "url": "https://www.xiaohongshu.com/explore/69e68d8a000000001a0284be?xsec_token=ABq_iMfMHNl6_oaDzVL9U67jcD1fapKuZ185D0CAxWb4Q=&xsec_source=pc_user",
+              "title": "注意力机制如何变得如此高效（第二部分）"
+            }
+          ]
+        },
+        {
+          "point": "微调相关提问（如题）",
+          "detail": "无具体知识点提炼。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69eb15580000000011023001",
+              "url": "https://www.xiaohongshu.com/explore/69eb15580000000011023001?xsec_token=ABoBkHdzMsk0eo2u3EuRzPK0tdR7KwXjcavgYRcA3RzTY=&xsec_source=pc_user",
+              "title": "如题"
+            }
+          ]
+        },
+        {
+          "point": "Ralph+多智能体编排，让AI长时工作",
+          "detail": "Agent相关，无具体知识点提炼。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69ef79f400000000350208fc",
+              "url": "https://www.xiaohongshu.com/explore/69ef79f400000000350208fc?xsec_token=ABp2zP1-u52Ak4Q5znCQZoQwVcuS0pYAX_DA9e2Vzv3Dw=&xsec_source=pc_user",
+              "title": "Ralph+多智能体编排，让AI长时工作"
+            }
+          ]
+        },
+        {
+          "point": "大模型看！尝试！（Agent相关）",
+          "detail": "Agent相关，无具体知识点提炼。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "69ef3544000000003501efab",
+              "url": "https://www.xiaohongshu.com/explore/69ef3544000000003501efab?xsec_token=ABp2zP1-u52Ak4Q5znCQZoQ5Vyqbn7Beg6F7N6R7J6NJE=&xsec_source=pc_user",
+              "title": "大模型看！尝试！"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "Agent设计与Agentic RL",
+      "points": [
+        {
+          "point": "Agentic RL将LLM从单步MDP范式演进至长程POMDP范式，从被动生成器变为自主决策智能体",
+          "detail": "传统RLHF是单步MDP（给prompt生成一次完整回答获得一次奖励），Agentic RL建模为POMDP，环境状态动态演化且部分可观测，动作空间覆盖文本与工具交互。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69f0be8c00000000360009fc",
+              "url": "https://www.xiaohongshu.com/explore/69f0be8c00000000360009fc?xsec_token=ABZzlQK3SGCP2M-YnuZzgu5e0pvUCQbZLZFABxP2Wgsd4=&xsec_source=pc_user",
+              "title": "Agentic RL全景综述"
+            }
+          ]
+        },
+        {
+          "point": "Agentic RL的核心是轨迹级策略优化，而非单次输出偏好对齐",
+          "detail": "关心的不只是最终答案，还包括中间动作是否合理、工具使用是否有效、状态更新是否可靠，以及失败轨迹能否转化为可学习信号。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e1dedb000000001f004d7d",
+              "url": "https://www.xiaohongshu.com/explore/69e1dedb000000001f004d7d?xsec_token=ABwRZGC6PBapCiFU2JvfRTOhyRxIDITv_VWBkfmfPWkzY=&xsec_source=pc_user",
+              "title": "Agentic RL 实践经验的总结和反思"
+            }
+          ]
+        },
+        {
+          "point": "GRPO通过同组轨迹平均回报作基线，无需额外Critic Model",
+          "detail": "不需要维护额外价值网络，显存和算力压力更小；通过多条候选轨迹的相对比较提供稳定的策略更新信号，将优化从'绝对好坏'转为'相对优劣'。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e1dedb000000001f004d7d",
+              "url": "https://www.xiaohongshu.com/explore/69e1dedb000000001f004d7d?xsec_token=ABwRZGC6PBapCiFU2JvfRTOhyRxIDITv_VWBkfmfPWkzY=&xsec_source=pc_user",
+              "title": "Agentic RL 实践经验的总结和反思"
+            }
+          ]
+        },
+        {
+          "point": "短程任务用MDP建模，长程任务需转向POMDP并引入记忆模块",
+          "detail": "任务步数≤10步且状态完整时用MDP；超过10步或状态无法完全写入上下文时用POMDP，必须引入记忆模块防止长轨迹中约束和目标丢失。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e1dedb000000001f004d7d",
+              "url": "https://www.xiaohongshu.com/explore/69e1dedb000000001f004d7d?xsec_token=ABwRZGC6PBapCiFU2JvfRTOhyRxIDITv_VWBkfmfPWkzY=&xsec_source=pc_user",
+              "title": "Agentic RL 实践经验的总结和反思"
+            }
+          ]
+        },
+        {
+          "point": "Echo Trap是多轮RL训练中常见的策略坍塌问题",
+          "detail": "模型过拟合局部奖励模式，短期奖励看似提高但真实任务能力下降；表现为复用固定模板、基础任务无法完成；成因是奖励信号过窄或局部奖励过强。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e1dedb000000001f004d7d",
+              "url": "https://www.xiaohongshu.com/explore/69e1dedb000000001f004d7d?xsec_token=ABwRZGC6PBapCiFU2JvfRTOhyRxIDITv_VWBkfmfPWkzY=&xsec_source=pc_user",
+              "title": "Agentic RL 实践经验的总结和反思"
+            }
+          ]
+        },
+        {
+          "point": "RL赋能智能体六大能力：规划、工具使用、记忆、自我改进、推理、感知",
+          "detail": "每个能力方向都有代表性工作，如规划（RAP/LATS/VOYAGER）、推理（DeepSeek-R1/GRPO）、工具使用（ReAct/ToolRL）、记忆（MemGPT/Memory-R1）、自我改进（Absolute Zero/R-Zero）、感知（Vision-R1/DeepEyes）。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69f0be8c00000000360009fc",
+              "url": "https://www.xiaohongshu.com/explore/69f0be8c00000000360009fc?xsec_token=ABZzlQK3SGCP2M-YnuZzgu5e0pvUCQbZLZFABxP2Wgsd4=&xsec_source=pc_user",
+              "title": "Agentic RL全景综述"
+            }
+          ]
+        },
+        {
+          "point": "可验证的密集过程奖励（Process-based rewards）是Agentic RL成功的关键",
+          "detail": "纯RL后训练可能损害事实性，将SFT与可验证奖励的RL结合可缓解退化。如FSPO对每步推理进行事实性验证，直接惩罚不真实的中间步骤。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69f0be8c00000000360009fc",
+              "url": "https://www.xiaohongshu.com/explore/69f0be8c00000000360009fc?xsec_token=ABZzlQK3SGCP2M-YnuZzgu5e0pvUCQbZLZFABxP2Wgsd4=&xsec_source=pc_user",
+              "title": "Agentic RL全景综述"
+            }
+          ]
+        },
+        {
+          "point": "Scaling规律：加大RL训练计算量可系统性提升智能体能力，充分RL训练的小模型可匹敌大模型",
+          "detail": "这体现了Test-time Compute和RL Scaling Law的价值。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69f0be8c00000000360009fc",
+              "url": "https://www.xiaohongshu.com/explore/69f0be8c00000000360009fc?xsec_token=ABZzlQK3SGCP2M-YnuZzgu5e0pvUCQbZLZFABxP2Wgsd4=&xsec_source=pc_user",
+              "title": "Agentic RL全景综述"
+            }
+          ]
+        },
+        {
+          "point": "当前三大核心挑战：可信度危机、规模化瓶颈、环境局限",
+          "detail": "可信度方面RL易引发Reward Hacking、幻觉放大和Sycophancy；规模化方面长序列多步采样成本极高且易出现熵坍缩（策略过早放弃探索陷入局部最优）；环境方面缺乏能与智能体协同进化的动态自适应训练环境。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69f0be8c00000000360009fc",
+              "url": "https://www.xiaohongshu.com/explore/69f0be8c00000000360009fc?xsec_token=ABZzlQK3SGCP2M-YnuZzgu5e0pvUCQbZLZFABxP2Wgsd4=&xsec_source=pc_user",
+              "title": "Agentic RL全景综述"
+            }
+          ]
+        },
+        {
+          "point": "实践建议：SFT建立先验 + 轨迹过滤和奖励分解维持稳定 + 并行采样提升效率",
+          "detail": "用SFT建立基础行为先验，用MDP/POMDP合理建模多轮状态变化，用轨迹过滤和奖励分解维持训练稳定，用记忆系统支撑长程任务，用并行采样提升训练效率。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e1dedb000000001f004d7d",
+              "url": "https://www.xiaohongshu.com/explore/69e1dedb000000001f004d7d?xsec_token=ABwRZGC6PBapCiFU2JvfRTOhyRxIDITv_VWBkfmfPWkzY=&xsec_source=pc_user",
+              "title": "Agentic RL 实践经验的总结和反思"
+            }
+          ]
+        },
+        {
+          "point": "Agentic RL的rollout在多轮交互（100轮以上）场景下极慢，单epoch可能需数天到一周",
+          "detail": "目前通过多卡并行、并行case来加速，但单个case的rollout仍无加速效果；远程docker服务器的SSH连接也可能是拖慢速度的原因；GPU集群docker容器内无法再起容器是一个工程限制。",
+          "quality": "medium",
+          "sources": [
+            {
+              "note_id": "69e8309d000000001b000815",
+              "url": "https://www.xiaohongshu.com/explore/69e8309d000000001b000815?xsec_token=ABztY4ULL0P1KjZXXdgXhPIVWXWnKXVWbPQHwXGenQInQ=&xsec_source=pc_user",
+              "title": "Agentic RL 的加速方法"
+            }
+          ]
+        },
+        {
+          "point": "未来方向包括可信智能体、高效训练算法、元学习和真实世界部署",
+          "detail": "可信智能体需内嵌安全护栏和基于事实的奖励模型；部署需建立Human-in-the-loop、分层编排与标准化多智能体通信协议。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69f0be8c00000000360009fc",
+              "url": "https://www.xiaohongshu.com/explore/69f0be8c00000000360009fc?xsec_token=ABZzlQK3SGCP2M-YnuZzgu5e0pvUCQbZLZFABxP2Wgsd4=&xsec_source=pc_user",
+              "title": "Agentic RL全景综述"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "RL偏好对齐与后训练",
+      "points": [
+        {
+          "point": "SFT让模型学会像，RL让模型学会挑——三个启动RL的信号",
+          "detail": "信号A：SFT val loss横盘但盲评仍有体感问题；信号B：任务天然有多方案挑优成分；信号C：能搭出rollout判分器（规则/执行/人工偏好）。三个都没有就回去做SFT。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e8c2610000000023024213",
+              "url": "https://www.xiaohongshu.com/explore/69e8c2610000000023024213?xsec_token=ABztY4ULL0P1KjZXXdgXhPIfMGsuMgtVY2gizV4_obBg4=&xsec_source=pc_user",
+              "title": "RL最佳实践：SFT之后那一步怎么走（上）"
+            }
+          ]
+        },
+        {
+          "point": "按场景选RL路线：垂类走DPO，通用对话走DPO/KTO，推理模型走GRPO+DAPO",
+          "detail": "垂类B端（法律/医疗/金融）千万别硬上GRPO，用专家标5k-2w pair走DPO即可；通用对话没判分器不要用GRPO否则训成套话机器；推理模型有规则判分器直接走RLVR，不再训RM。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e8c2610000000023024213",
+              "url": "https://www.xiaohongshu.com/explore/69e8c2610000000023024213?xsec_token=ABztY4ULL0P1KjZXXdgXhPIfMGsuMgtVY2gizV4_obBg4=&xsec_source=pc_user",
+              "title": "RL最佳实践：SFT之后那一步怎么走（上）"
+            }
+          ]
+        },
+        {
+          "point": "开放式对话硬上GRPO会导致reward hacking",
+          "detail": "用LLM-as-Judge当reward，模型会被训成'写得长+讨好开头+三段排比'的套话机器，训练曲线好看但上线口碑翻车。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e8c2610000000023024213",
+              "url": "https://www.xiaohongshu.com/explore/69e8c2610000000023024213?xsec_token=ABztY4ULL0P1KjZXXdgXhPIfMGsuMgtVY2gizV4_obBg4=&xsec_source=pc_user",
+              "title": "RL最佳实践：SFT之后那一步怎么走（上）"
+            }
+          ]
+        },
+        {
+          "point": "推理模型的RL启动信号：pass@1涨但pass@8没涨或微跌",
+          "detail": "说明模型只把示范解法那一条路概率推高了，没学会多条路，这不是SFT能补的，需要RL让模型在自己rollout的分布里探索更多路径。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e8c2610000000023024213",
+              "url": "https://www.xiaohongshu.com/explore/69e8c2610000000023024213?xsec_token=ABztY4ULL0P1KjZXXdgXhPIfMGsuMgtVY2gizV4_obBg4=&xsec_source=pc_user",
+              "title": "RL最佳实践：SFT之后那一步怎么走（上）"
+            }
+          ]
+        },
+        {
+          "point": "RL翻车比SFT多一个数量级，常见坑包括reward hacking、entropy collapse、KL爆炸",
+          "detail": "SFT翻车八成是loss mask和chat template改对就能复活；RL翻车每一种都要换一套排查工具，需要系统性的停止判据和监控。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e8c2610000000023024213",
+              "url": "https://www.xiaohongshu.com/explore/69e8c2610000000023024213?xsec_token=ABztY4ULL0P1KjZXXdgXhPIfMGsuMgtVY2gizV4_obBg4=&xsec_source=pc_user",
+              "title": "RL最佳实践：SFT之后那一步怎么走（上）"
+            }
+          ]
+        },
+        {
+          "point": "多轮对话RL中历史Think内容需按任务类型选择性处理：完整保留、压缩摘要或选择性保留",
+          "detail": "长程推理任务保留完整推理链；一般任务可通过语义相似度筛选强相关内容或用摘要模型压缩；上下文超载时可用滑动窗口（仅保留最近K轮完整Think）或Memory模块（结构化存储关键信息并按需召回）。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e04b730000000020038989",
+              "url": "https://www.xiaohongshu.com/explore/69e04b730000000020038989?xsec_token=AB2PsqZF5GJRdC16WA9LKcx3jH-cW3co_t9YyJenl3ICw=&xsec_source=pc_user",
+              "title": "多轮对话RL训练中Think内容的处理与训练"
+            }
+          ]
+        },
+        {
+          "point": "奖励函数需同时兼顾Answer质量与Think过程质量",
+          "detail": "需将Think的逻辑性、完整性及多轮一致性纳入奖励函数，避免结果正确但推理混乱的样本获高分；同时通过长度限制、长度惩罚或简洁性奖励约束Think冗余过长。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e04b730000000020038989",
+              "url": "https://www.xiaohongshu.com/explore/69e04b730000000020038989?xsec_token=AB2PsqZF5GJRdC16WA9LKcx3jH-cW3co_t9YyJenl3ICw=&xsec_source=pc_user",
+              "title": "多轮对话RL训练中Think内容的处理与训练"
+            }
+          ]
+        },
+        {
+          "point": "PPO/GRPO训练中需分别监控Think和Answer部分的KL散度",
+          "detail": "建议用同模型早期checkpoint作参考模型以保证Think格式相近；若KL散度主要来自Think部分，说明推理逻辑偏离过大，需增大Think部分的KL惩罚系数β_KL,Think > β_KL,Ans来约束。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e04b730000000020038989",
+              "url": "https://www.xiaohongshu.com/explore/69e04b730000000020038989?xsec_token=AB2PsqZF5GJRdC16WA9LKcx3jH-cW3co_t9YyJenl3ICw=&xsec_source=pc_user",
+              "title": "多轮对话RL训练中Think内容的处理与训练"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "大模型架构与Scaling Law",
+      "points": [
+        {
+          "point": "DeepSeek V2引入MoE和MLA两大架构创新",
+          "detail": "MoE：总参236B单token仅激活21B，160个路由专家+2个共享专家，训练成本降42.5%、推理吞吐量提5.76倍。MLA：低秩联合压缩KV缓存，显存占用降93.3%，解决128K长序列推理瓶颈。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e8c045000000002302759d",
+              "url": "https://www.xiaohongshu.com/explore/69e8c045000000002302759d?xsec_token=ABztY4ULL0P1KjZXXdgXhPIfMGsuMgtVY2gizV4_obBg4=&xsec_source=pc_user",
+              "title": "被问DeepSeek技术报告直接红温😭"
+            }
+          ]
+        },
+        {
+          "point": "DeepSeek V3系列持续升级MoE并引入DSA稀疏注意力",
+          "detail": "V3：256路由专家+1共享专家，单token激活8个，支持1M token上下文和原生多模态。V3.1：混合推理双模式（快速+思考）。V3.2-Exp：DSA将注意力复杂度从O(L²)降为O(Lk)。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e8c045000000002302759d",
+              "url": "https://www.xiaohongshu.com/explore/69e8c045000000002302759d?xsec_token=ABztY4ULL0P1KjZXXdgXhPIfMGsuMgtVY2gizV4_obBg4=&xsec_source=pc_user",
+              "title": "被问DeepSeek技术报告直接红温😭"
+            }
+          ]
+        },
+        {
+          "point": "R1系列专注推理，R1-Zero实现纯RL训练无需SFT和人工标注",
+          "detail": "R1-0528：AIME 2025准确率从70%提升至87.5%，单题思考token从12K翻倍至23K，新增Function Calling。R1-Zero：纯RL自我博弈优化推理，标注成本降为0。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e8c045000000002302759d",
+              "url": "https://www.xiaohongshu.com/explore/69e8c045000000002302759d?xsec_token=ABztY4ULL0P1KjZXXdgXhPIfMGsuMgtVY2gizV4_obBg4=&xsec_source=pc_user",
+              "title": "被问DeepSeek技术报告直接红温😭"
+            }
+          ]
+        },
+        {
+          "point": "MLA与DSA的区别：MLA降KV缓存，DSA降整体注意力计算",
+          "detail": "V2用MLA解决KV缓存瓶颈，V3.2用DSA降低整体注意力计算复杂度，适配不同长文本场景需求。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69e8c045000000002302759d",
+              "url": "https://www.xiaohongshu.com/explore/69e8c045000000002302759d?xsec_token=ABztY4ULL0P1KjZXXdgXhPIfMGsuMgtVY2gizV4_obBg4=&xsec_source=pc_user",
+              "title": "被问DeepSeek技术报告直接红温😭"
+            }
+          ]
+        },
+        {
+          "point": "DeepSeek V1用non-embedding FLOPs/token重新定义模型规模度量",
+          "detail": "Embedding层以内存访问为主FLOPs小，输出层常被简化但推理时不可忽略。用non-embedding FLOPs/token比单纯参数量更准确反映训练计算成本。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69edeee800000000350249c7",
+              "url": "https://www.xiaohongshu.com/explore/69edeee800000000350249c7?xsec_token=ABOHgtp5X742J9FuTXeyBydpo1zYwQr65aQ6hguPnHyLM=&xsec_source=pc_user",
+              "title": "面试被问DeepSeek答不上来? 从V1开始补课"
+            }
+          ]
+        },
+        {
+          "point": "C=M×D最优配比公式：总算力=单token计算量×数据量，预算固定时存在最优的N和D组合",
+          "detail": "C=N×D与C=M×D本质一样，在dense Transformer中M约等于k×N，跨论文对比要先对齐口径。数据质量越高，最优的模型参数量N可以越大。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69edeee800000000350249c7",
+              "url": "https://www.xiaohongshu.com/explore/69edeee800000000350249c7?xsec_token=ABOHgtp5X742J9FuTXeyBydpo1zYwQr65aQ6hguPnHyLM=&xsec_source=pc_user",
+              "title": "面试被问DeepSeek答不上来? 从V1开始补课"
+            }
+          ]
+        },
+        {
+          "point": "训练瓶颈不等于推理瓶颈",
+          "detail": "训练时Attention+MLP占主导，推理时输出层/KV cache和带宽可能更关键，尤其在小batch在线推理场景。non-embedding FLOPs是训练计算口径，不是部署成本。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69edeee800000000350249c7",
+              "url": "https://www.xiaohongshu.com/explore/69edeee800000000350249c7?xsec_token=ABOHgtp5X742J9FuTXeyBydpo1zYwQr65aQ6hguPnHyLM=&xsec_source=pc_user",
+              "title": "面试被问DeepSeek答不上来? 从V1开始补课"
+            }
+          ]
+        },
+        {
+          "point": "V1对齐采用SFT+DPO两步走：SFT管任务能力，DPO管回答质量",
+          "detail": "SFT用指令-回答数据做自回归训练让模型执行指令，DPO构建偏好数据同题多答排序优劣让回答更清晰稳健。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69edeee800000000350249c7",
+              "url": "https://www.xiaohongshu.com/explore/69edeee800000000350249c7?xsec_token=ABOHgtp5X742J9FuTXeyBydpo1zYwQr65aQ6hguPnHyLM=&xsec_source=pc_user",
+              "title": "面试被问DeepSeek答不上来? 从V1开始补课"
+            }
+          ]
+        },
+        {
+          "point": "HPC协同设计+数据质量优先是V1的工程方法论",
+          "detail": "并行策略（数据/张量/流水并行）、通信拓扑重叠、精度策略（BF16/FP16+loss scale+梯度裁剪）联合优化。数据质量维度包括准确性、信息密度、去重、分布匹配和难度梯度。",
+          "quality": "high",
+          "sources": [
+            {
+              "note_id": "69edeee800000000350249c7",
+              "url": "https://www.xiaohongshu.com/explore/69edeee800000000350249c7?xsec_token=ABOHgtp5X742J9FuTXeyBydpo1zYwQr65aQ6hguPnHyLM=&xsec_source=pc_user",
+              "title": "面试被问DeepSeek答不上来? 从V1开始补课"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "分布式训练与工程实践",
+      "points": [
+        {
+          "point": "LLM训练TODO清单覆盖三大模块：算法基础、分布式训练、独立工程实践",
+          "detail": "算法基础包括手写BPE、SFT/DPO/GRPO后训练、LLaMA/GPT/PaLM/MoE结构差异。分布式训练包括DDP/FSDP/TP/PP及显存优化。工程实践包括data pipeline、NaN处理、断点续训。",
+          "quality": "medium",
+          "sources": [
+            {
+              "note_id": "69df2081000000001f002dca",
+              "url": "https://www.xiaohongshu.com/explore/69df2081000000001f002dca?xsec_token=ABkDBC0pmHr_RW8Ca3izDugG2iX63qdtYHCYgXlDDrF8E=&xsec_source=pc_user",
+              "title": "大语言模型算法（perhaps工程）todo清单"
+            }
+          ]
+        },
+        {
+          "point": "分布式训练关键技术要点：FSDP比DDP省约50%显存，TP行切/列切权重矩阵，PP用1F1B微批次调度",
+          "detail": "显存优化手段包括激活重计算、混合精度（FP16需loss scaling，BF16可无脑用）、梯度累积模拟超大batch。训练稳定性需监控梯度范数、NaN自动跳过。",
+          "quality": "medium",
+          "sources": [
+            {
+              "note_id": "69df2081000000001f002dca",
+              "url": "https://www.xiaohongshu.com/explore/69df2081000000001f002dca?xsec_token=ABkDBC0pmHr_RW8Ca3izDugG2iX63qdtYHCYgXlDDrF8E=&xsec_source=pc_user",
+              "title": "大语言模型算法（perhaps工程）todo清单"
+            }
+          ]
+        },
+        {
+          "point": "checkpoint必须存储model、optimizer、scheduler、seed、step五要素以支持断点续训",
+          "detail": "要求从任意step恢复后loss一致。NaN检测策略包括跳过batch、降低LR、保存现场。",
+          "quality": "medium",
+          "sources": [
+            {
+              "note_id": "69df2081000000001f002dca",
+              "url": "https://www.xiaohongshu.com/explore/69df2081000000001f002dca?xsec_token=ABkDBC0pmHr_RW8Ca3izDugG2iX63qdtYHCYgXlDDrF8E=&xsec_source=pc_user",
+              "title": "大语言模型算法（perhaps工程）todo清单"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "其他",
+      "points": [
+        {
+          "point": "所有提供的笔记均标记为已汇总(_summarized: true)，但未包含实际的知识点内容",
+          "detail": "输入的JSON数组中每条记录仅包含source_note_id和_summarized标记，没有提供具体的知识点(point)、详情(detail)、质量(quality)等字段，因此无法进行主题聚类、去重合并或排序操作。",
+          "quality": "low",
+          "sources": [
+            {
+              "note_id": "6a2e6a78000000002101b784",
+              "url": "",
+              "title": ""
+            },
+            {
+              "note_id": "6a2ecca500000000220201f6",
+              "url": "",
+              "title": ""
+            },
+            {
+              "note_id": "6a2ede96000000001602730f",
+              "url": "",
+              "title": ""
+            },
+            {
+              "note_id": "6a2f60ba0000000017008461",
+              "url": "",
+              "title": ""
+            },
+            {
+              "note_id": "6a2f652b000000000f0170a3",
+              "url": "",
+              "title": ""
+            },
+            {
+              "note_id": "6a30285d0000000008000ea5",
+              "url": "",
+              "title": ""
+            },
+            {
+              "note_id": "6a321829000000000f00597f",
+              "url": "",
+              "title": ""
+            },
+            {
+              "note_id": "6a32bffe000000001101aa0c",
+              "url": "",
+              "title": ""
+            }
           ]
         }
       ]
