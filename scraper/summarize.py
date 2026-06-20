@@ -241,32 +241,38 @@ def main():
 
     # ===== 阶段1：逐条提炼（只处理新帖，分批调用以控制单次 token 量）=====
     # build_note_payload 把帖子精简成只含总结需要的字段，省 token
-    new_payloads = [build_note_payload(n) for n in new_notes]
-    for i in range(0, len(new_payloads), batch_size):
-        batch = new_payloads[i:i + batch_size]  # 取一批（默认每批 8 条）
-        print(f"提炼新帖第 {i//batch_size + 1} 批（{len(batch)} 条）...")
-        prompt = PROMPT_EXTRACT.format(batch=json.dumps(batch, ensure_ascii=False, indent=2))
+    def try_extract(payloads):
+        """对一组帖子调用模型并解析，成功返回 list，失败抛异常。"""
+        prompt = PROMPT_EXTRACT.format(
+            batch=json.dumps(payloads, ensure_ascii=False, indent=2))
         out = llm.chat(SYSTEM_EXTRACT, prompt)
-        try:
-            arr = parse_json_loose(out)
-        except Exception as e:
-            # 解析失败再给模型一次机会：强调“只输出 JSON 数组，不要任何解释/不要markdown围栏”
-            print(f"    [解析失败，重试一次] {e}")
-            retry_sys = SYSTEM_EXTRACT + " 必须直接输出 JSON 数组本身，禁止任何解释文字，禁止使用```代码块包裹。"
-            try:
-                out = llm.chat(retry_sys, prompt)
-                arr = parse_json_loose(out)
-            except Exception as e2:
-                print(f"    [跳过该批] 重试仍失败：{e2}")
-                continue
+        arr = parse_json_loose(out)
         if not isinstance(arr, list):
-            continue
-        # 按 note_id 落盘缓存，便于下次增量复用
+            raise ValueError("返回不是 JSON 数组")
+        return arr
+
+    def save_items(arr):
         for item in arr:
             nid = item.get("source_note_id", "")
             if nid:
                 with open(EXTRACTED_DIR / f"{nid}.json", "w", encoding="utf-8") as f:
                     json.dump(item, f, ensure_ascii=False, indent=2)
+
+    new_payloads = [build_note_payload(n) for n in new_notes]
+    for i in range(0, len(new_payloads), batch_size):
+        batch = new_payloads[i:i + batch_size]
+        print(f"提炼新帖第 {i//batch_size + 1} 批（{len(batch)} 条）...")
+        try:
+            save_items(try_extract(batch))
+            continue
+        except Exception as e:
+            print(f"    [整批解析失败] {e} —— 拆成单条逐个重试")
+        # 整批失败：拆单条逐个提炼，最大限度抢救（个别帖子内容会让模型输出非法JSON）
+        for p in batch:
+            try:
+                save_items(try_extract([p]))
+            except Exception as e2:
+                print(f"      [跳过单条 {p.get('note_id','?')}] {e2}")
 
     # 读取全部提炼结果（新提炼的 + 历史缓存的）一起进入汇总
     extracted_all = []
